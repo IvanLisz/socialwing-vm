@@ -1,0 +1,22 @@
+{
+  "name": "monk-ec2",
+  "version": "0.0.0",
+  "description": "The best module ever.",
+  "author": {
+    "name": "",
+    "email": ""
+  },
+  "repository": "IvanLisz/monk-elastic-beanstalk",
+  "license": "MIT",
+  "files": [
+    "index.js"
+  ],
+  "keywords": [
+    "monk-elastic-beanstalk",
+    ""
+  ],
+  "dependencies": {
+    "cron": "^1.0.9"
+  },
+  "devDependencies": {}
+}
