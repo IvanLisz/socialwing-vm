@@ -18,3 +18,22 @@ MongoClient.connect(url, function(err, db) {
 	  start: true
 	});
 });
+
+
+
+
+	/*
+	function streamTweets () {
+		var stream = userTw.stream('statuses/filter', {track: 'hola'});
+
+		stream.on('tweet', function (data) {
+			console.log('streem data:');
+			console.log(data.text);
+		});
+
+		setTimeout(function() {
+			stream.stop();
+			context.succeed('force');
+		}, 2000);
+	}
+	*/
