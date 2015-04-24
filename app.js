@@ -5,29 +5,38 @@ var CronJob 		= require('cron').CronJob,
 	assert 			= require('assert'),
 	Twit 			= require('twit');
 
+var processedIds = [];
+
 // Connection URL
 var url = 'mongodb://localhost:27017/monk';
-/*MongoClient.connect(url, function(err, db) {
-
+MongoClient.connect(url, function(err, db) {
 
 	var collection = db.collection('calendar');
 
 	function checkCalendar () {
+
 		console.log('tick');
 		var nowMinute = getNowMinute();
 		console.log(nowMinute);
 		collection.find({
 			timestamp: {
-				"$lt" : nowMinute + 600010,
+				"$lt" : nowMinute + 60001,
 				"$gt" : nowMinute - 1
 
 			}
 		}).each(function (err, data) {
-			if (err || !data){
+			if (err || !data || processedIds.indexOf(data._id.toString()) >= 0){
 				return;
 			}
-			console.log("data");
+
+			console.log("indexof");
+			console.log(processedIds.indexOf(data._id.toString()));
+
+
+
+			processedIds.push(data._id.toString());
 			streamTweets(data);
+
 		});
 	}
 
@@ -36,12 +45,14 @@ var url = 'mongodb://localhost:27017/monk';
 	  onTick: checkCalendar,
 	  start: true
 	});
-});*/
+});
 
-var data = { follow: 20 };
-streamTweets(data);
+//var data = { follow: 20 };
+//streamTweets(data);
 
 function streamTweets (data) {
+
+	console.log(data)
 
 	var userTw = new Twit({
 		consumer_key: 'xRChrKNAflVpEKC1Z6aSgSYgi',
@@ -56,12 +67,11 @@ function streamTweets (data) {
 	var users = [];
 	stream.on('tweet', function (tweet) {
 		if(tweets <= data.follow){
-			console.log(users.indexOf(tweet.user.screen_name) );
 			if (users.indexOf(tweet.user.screen_name) >=  0){
 				return;
 			}
 
-			console.log('streem tweet:');
+			console.log('Streaming for user: ' + data.user);
 			console.log(tweet.user.screen_name + " " + tweet.text);
 
 			users.push(tweet.user.screen_name);
