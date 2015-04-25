@@ -20,7 +20,7 @@ MongoClient.connect(url, function(err, db) {
 		console.log(nowMinute);
 		collection.find({
 			timestamp: {
-				"$lt" : nowMinute + 60001,
+				"$lt" : nowMinute + 1200010,
 				"$gt" : nowMinute - 1
 
 			}
@@ -52,9 +52,7 @@ MongoClient.connect(url, function(err, db) {
 
 function streamTweets (data) {
 
-	console.log(data)
-
-	var userTw = new Twit({
+	var userTw = new Twit({ //get this from mongo
 		consumer_key: 'xRChrKNAflVpEKC1Z6aSgSYgi',
 		consumer_secret: 'rVbSrrdcxQBJqWLjYlzXBvhlCgFIKuYYVAAjVYWUXiW2tjxRNT',
 		access_token: '630725899-GXXJR3QokYVt5GNu5ANDxU8u5HqhBfUCyP9v7hHE',
@@ -71,13 +69,16 @@ function streamTweets (data) {
 				return;
 			}
 
-			console.log('Streaming for user: ' + data.user);
-			console.log(tweet.user.screen_name + " " + tweet.text);
+			//console.log('Streaming for ' + data.user + '( ' + tweets + ' ): ');
+			//console.log(tweet.user.screen_name + "--> " + tweet.text);
 
 			users.push(tweet.user.screen_name);
+
 			tweets++;
 
 		}else{
+			console.log(data);
+			lambdaFollow(data.user, users);
 			stream.stop();
 		}
 	});
@@ -87,4 +88,10 @@ function getNowMinute () {
 	var now = new Date; // now
 	now.setSeconds(0); // set seconds to 0
 	return Math.floor(now / 1000) * 1000;
+}
+
+function lambdaFollow(userid, follow){
+	follow.forEach(function (user){
+		console.log(userid + ": Follow --> " + user);
+	});
 }
