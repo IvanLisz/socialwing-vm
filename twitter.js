@@ -10,13 +10,14 @@ function stream (user, limit, callback) {
 		access_token_secret: user.secret
 	});
 
-	var stream = userTw.stream('statuses/filter', { track: user.track });
+	var stream = userTw.stream('statuses/filter', { track: user.track, language: 'es' });
 	var usersToFollow = [];
 	stream.on('tweet', function (tweet) {
 		if (usersToFollow.length < limit) {
 			if (usersToFollow.indexOf(tweet.user.id) >=  0) {
 				return;
 			}
+			console.log(tweet.text);
 			usersToFollow.push(tweet.user.id);
 		} else {
 			stream.stop();
@@ -45,7 +46,7 @@ function checkFollowers (user, usersToCheck, callback) {
 		var notFollowers = [];
 		usersChecked.forEach(function (userChecked) {
 			if (userChecked.connections.indexOf('followed_by') === -1) {
-				notFollowers.push(id);
+				notFollowers.push(userChecked.id);
 			}
 		});
 		callback(null, notFollowers);

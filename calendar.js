@@ -92,3 +92,5 @@ function create () {
 module.exports = {
 	create: create
 }
+
+if (process.argv[2] == 'create') { create(); }

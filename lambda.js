@@ -11,9 +11,10 @@ function init () {
 			secretKey: '3MfN4s468LC/uLQgrVmwvaAhMTPN3gyO9BucwFSH',  // string, AWS AccessKeySecret.
 		},
 		role: 'arn:aws:iam::792491017480:role/sqs-lambda', // ** Required **
-		region: 'us-west-2'
+		region: 'us-west-2',
+		uploadTimeout: 120000
 	});
-	cloudedTask = λ('./lambda-task', 'run', ['twit'], { name: 'monk-task', ignoreResponse: true });
+	cloudedTask = λ('./lambda-task', 'run', ['twit'], { name: 'monk-task', ignoreResponse: true, timeout: 10 });
 }
 
 function runTask (user, task) {
@@ -21,7 +22,7 @@ function runTask (user, task) {
 		console.log('no task in aws lambda');
 		return;
 	}
-	console.log('Task to Lambda of user: ' + user);
+	console.log('Task to Lambda of user: ' + user.username);
 	console.log(task);
 
 	var taskCredentials = {
