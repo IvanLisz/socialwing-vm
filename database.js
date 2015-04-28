@@ -79,7 +79,7 @@ function getUser (user, callback) {
 
 function getUsers (callback) {
 	users.find().toArray(function(err, usersData){
-		if(err || !usersData){
+		if(err || !usersData.length ){
 			return callback(err || "No users where founded");
 		}
 		return callback(null, usersData);
