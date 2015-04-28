@@ -30,11 +30,10 @@ function getTasks () {
 			console.log('follow ' + task.follow + ' with ' + task.user);
 			Twitter.stream(user, task.follow, function (usersToFollow) {
 				console.log('finished streaming, users to follow:');
-				console.log(usersToFollow);
+				console.log(getIds(usersToFollow));
 
 				task.follow = usersToFollow;
-				console.log('update task');
-				console.log(task);
+
 				Database.updateTask(task);
 
 				task.follow = getIds(usersToFollow); //aguante el pako
@@ -51,7 +50,7 @@ function getTasks () {
 		console.log('getted old task');
 		Database.getUser(task.user, function (err, user){
 			console.log('check to unfollow');
-			console.log(task.follow);
+			console.log(getIds(task.follow));
 			Twitter.checkFollowers(user, getIds(task.follow), function (err, notFollowers, followers) {
 				if (err) {
 					console.log(err);
@@ -63,7 +62,7 @@ function getTasks () {
 				var followData = task.follow;
 				task.unfollow = notFollowers;
 				delete task.follow;
-				console.log('run unfollow task');
+				console.log('*******************unfollow task');
 				console.log(task);
 				Lambda.runTask(user, task);
 
@@ -75,11 +74,13 @@ function getTasks () {
 
 Database.create(function(){
 	new CronJob({
-		cronTime: '0 * * * * *',
+		cronTime: '* * * * * *',
 		onTick: getTasks,
 		start: true
 	});
 });
+
+
 
 function sendMessages (user, followers, followData) {
 	var messages = [];
@@ -109,7 +110,7 @@ function getMessage (followerData, messages) {
 	var msg = messages[randomInt(0, messages.length -1)]
 			.replace("%screen_name", followerData.screen_name)
 			.replace("%full_name", followerData.name)
-			.replace("%first_name", followerData.name.split(' ')[0])
+			.replace("%first_name", followerData.name.split(' ')[0] || followerData.name)
 			.replace("%last_name", followerData.name.split(' ')[1] || followerData.name);
 	return msg;
 }

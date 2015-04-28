@@ -14,12 +14,12 @@ function stream (user, limit, callback) {
 	var usersToFollow = [];
 	stream.on('tweet', function (tweet) {
 		if (usersToFollow.length < limit) {
-			if (usersToFollow.indexOf(tweet.user.id) >=  0) {
+			if (usersToFollow.map(function (uData){ return uData.id }).indexOf(tweet.user.id) >=  0) {
 				return;
 			}
-			console.log(tweet.text);
+			//console.log(tweet.text);
+
 			usersToFollow.push(parseStreamUser(tweet.user));
-			//usersToFollow.push(tweet.user.id);
 		} else {
 			stream.stop();
 			callback(usersToFollow);
@@ -32,7 +32,7 @@ function parseStreamUser(user) {
 		id: user.id,
 		name: user.name,
 		screen_name: user.screen_name,
-		lang: user.lang
+		lang: user.lang.split("-")[0] // if es-MX --> es
 	}
 }
 
