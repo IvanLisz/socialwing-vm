@@ -30,6 +30,7 @@ function getOldTasks (callback) {
 }
 
 function _getTasksByMinutes (minutes, callback) {
+
 	calendar.find({
 		timestamp: {
 			"$lt" : minutes + 60001,
@@ -50,7 +51,8 @@ function _getTasksByMinutes (minutes, callback) {
 function _getNowMinute () {
 	var now = new Date; // now
 	now.setSeconds(0); // set seconds to 0
-	return Math.floor(now / 1000) * 1000;
+	now.setMilliseconds(0); // set miliseconds to 0
+	return now.getTime();
 }
 
 function updateTask (task) {
@@ -72,14 +74,15 @@ function getUser (user, callback) {
 			username: user,
 			key:  userdata.key,
 			secret: userdata.secret,
-			track: userdata.track
+			track: userdata.track,
+			messages: userdata.messages
 		});
 	});
 }
 
 function getUsers (callback) {
 	users.find().toArray(function(err, usersData){
-		if(err || !usersData.length ){
+		if(err || !usersData.length) {
 			return callback(err || "No users where founded");
 		}
 		return callback(null, usersData);
