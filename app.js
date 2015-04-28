@@ -29,12 +29,12 @@ function getTasks () {
 			});
 		});
 	});
-
 	Database.getOldTasks(function (err, task) {
 		if (err){
 			if (err != 'Tasks already executed') { console.log(err) };
 			return;
 		}
+		console.log('getted old task');
 		Database.getUser(task.user, function (err, user){
 			console.log('check to unfollow');
 			console.log(task.follow);
@@ -47,9 +47,8 @@ function getTasks () {
 				console.log(notFollowers);
 				task.unfollow = notFollowers;
 				delete task.follow;
+				console.log('task');
 				console.log(task);
-				return;
-
 				Lambda.runTask(user, task);
 			});
 		});
