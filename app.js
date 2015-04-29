@@ -20,7 +20,7 @@ function getTasks () {
 		Calendar.create();
 		lastCalendar = time.getDay();
 	}
-
+/*
 	Database.getTasks(function (err, task) {
 		if (err){
 			if (err != 'Tasks already executed') { console.log(err) };
@@ -41,7 +41,7 @@ function getTasks () {
 			});
 		});
 	});
-
+*/
 	Database.getOldTasks(function (err, task) {
 		if (err){
 			if (err != 'Tasks already executed') { console.log(err) };
