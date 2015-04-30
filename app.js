@@ -87,7 +87,6 @@ function sendMessages (user, followers, followData) {
 	followers.forEach(function (followerId) {
 
 		var followerData = getFollowerData(followData, followerId);
-		if (|| )
 		messages.push({
 			id: followerData.id,
 			message: getMessage(followerData, user.messages[followerData.lang] ||
