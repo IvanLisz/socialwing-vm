@@ -22,20 +22,13 @@ function getTasks (callback) {
 	_getTasksByMinutes(nowMinute, callback);
 }
 
-function getOldTasks (callback) {
-	if (!calendar) { return callback('database unready'); }
-	// Go one day backwards
-	var yesterdayMinute = _getNowMinute() - 600000;
-	_getTasksByMinutes(yesterdayMinute, callback);
-}
-
 function _getTasksByMinutes (minutes, callback) {
 
 	console.log('******************');
 	console.log('lower than');
 	console.log(minutes + 60000);
 	console.log('greater than than');
-	console.log(minutes);
+	console.log(minutes - 1);
 
 	calendar.find({
 		timestamp: {
@@ -46,10 +39,7 @@ function _getTasksByMinutes (minutes, callback) {
 		if (err || !data) {
 			return callback(err || 'No task founded');
 		}
-		if (processes.indexOf(data._id.toString()) !== -1) {
-			return callback('Tasks already executed');
-		}
-		processes.push(data._id.toString());
+		calendar.remove({ "_id": data._id });
 		return callback(null, data);
 	});
 }
@@ -61,17 +51,14 @@ function _getNowMinute () {
 	return now.getTime();
 }
 
-function updateTask (task) {
-	calendar.update(
-		{ "_id": task._id },
-		task,
-		{ upsert: true }
-	);
+function createUnfollowTask (task) {
+	task.timestamp = Date.now() + 7200000;
+	calendar.insert(task);
 }
 
 function getUser (user, callback) {
 
-	users.findOne({ username: user}, function(err, userdata) {
+	users.findOne({ username: user }, function(err, userdata) {
 		if (err || !userdata) {
 			return callback(err || "User was not founded.");
 		}
@@ -109,8 +96,7 @@ function sendCalendar (userCalendar) {
 module.exports = {
 	create: create,
 	getTasks: getTasks,
-	getOldTasks: getOldTasks,
-	updateTask: updateTask,
+	createUnfollowTask: createUnfollowTask,
 	getUser: getUser,
 	getUsers: getUsers,
 	sendCalendar: sendCalendar

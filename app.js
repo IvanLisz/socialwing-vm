@@ -1,6 +1,7 @@
 'use strict';
 
 var CronJob 		= require('cron').CronJob,
+	Util 			= require('./util'),
 	Twitter 		= require('./twitter'),
 	Database		= require('./database'),
 	Lambda			= require('./lambda'),
@@ -28,54 +29,48 @@ function getTasks () {
 		}
 		Database.getUser(task.user, function (err, user){
 			console.log('follow ' + task.follow + ' with ' + task.user);
-			Twitter.stream(user, task.follow, function (usersToFollow) {
-				console.log('finished streaming, users to follow:');
-				console.log(getIds(usersToFollow));
 
-				task.follow = usersToFollow;
-
-				Database.updateTask(task);
-
-				task.follow = getIds(usersToFollow); //aguante el pako
-				Lambda.runTask(user, task);
-			});
-		});
-	});
-
-		console.log('getting old tasks...');
-	Database.getOldTasks(function (err, task) {
-		console.log('old tasks...');
-		console.log(task);
-		if (err){
-			if (err != 'Tasks already executed') { console.log(err) };
-			return;
-		}
-		if (typeof task !== 'object') {
-			return console.log('Task to unfollow ' + task + ' is not an object.');
-		}
-		console.log('getted old task');
-		Database.getUser(task.user, function (err, user){
-			console.log('check to unfollow');
-			console.log(getIds(task.follow));
-			Twitter.checkFollowers(user, getIds(task.follow), function (err, notFollowers, followers) {
-				if (err) {
-					console.log(err);
-					return;
-				}
-				console.log('unfollow checked:');
-				console.log(notFollowers);
-				// unfollow who doesn't return follow
-				var followData = task.follow;
-				task.unfollow = notFollowers;
-				delete task.follow;
-				console.log('*******************unfollow task');
+			if (task.follow) {
+				console.log("start streaming");
 				console.log(task);
-				Lambda.runTask(user, task);
+				Twitter.stream(user, task.follow, function (usersToFollow) {
+					console.log('finished streaming, users to follow:');
+					console.log(getIds(usersToFollow));
 
-				console.log('followers to send message');
-				console.log(followers);
-				sendMessages(user, followers, followData);
-			});
+					// follow users
+					var followTask = Util.clone(task);
+					followTask.follow = getIds(usersToFollow);
+					Lambda.runTask(user, followTask);
+
+					// create unfollow task, get rid of the follow and make it unfollow
+					delete task.follow;
+					task.unfollow = usersToFollow;
+					Database.createUnfollowTask(task);
+
+				});
+			}
+
+			if (task.unfollow && task.unfollow.length) {
+				console.log('check to unfollow');
+				console.log(getIds(task.unfollow));
+				Twitter.checkFollowers(user, getIds(task.unfollow), function (err, notFollowers, followers) {
+					if (err) {
+						console.log(err);
+						return;
+					}
+
+					// follow users
+					var unfollowTask = Util.clone(task);
+					unfollowTask.unfollow = notFollowers;
+					Lambda.runTask(user, unfollowTask);
+
+
+					console.log('followers to send message');
+					console.log(followers);
+					sendMessages(user, followers, task.unfollow);
+				});
+			}
+
 		});
 	});
 }
@@ -91,33 +86,27 @@ Database.create(function(){
 
 
 function sendMessages (user, followers, followData) {
-	var messages = [];
-	followers.forEach(function (followerId) {
 
-		var followerData = getFollowerData(followData, followerId);
-		messages.push({
-			id: followerData.id,
-			message: getMessage(followerData, user.messages[followerData.lang] ||
-					 user.messages.es ||
-					 user.messages.en ||
-					 user.messages[Object.keys(user.messages)[0]])
-		})
+	var messages = [];
+
+	followers.forEach(function (followerId) {
+		followData.forEach(function (followerData){
+			if (followerId === followerData.id) {
+				messages.push({
+					id: followerData.id,
+					message: getMessage(followerData, user.messages[followerData.lang] ||
+							 user.messages.es ||
+							 user.messages.en ||
+							 user.messages[Object.keys(user.messages)[0]])
+				});
+			}
+		});
 	});
 
 	console.log('*******************run messages');
 	console.log(messages);
 	// message followers
 	Lambda.runMessages(user, messages);
-}
-
-function getFollowerData (followers, id) {
-	var data;
-	followers.forEach(function (follower){
-		if (follower.id === id){
-			data = follower;
-		}
-	});
-	return data;
 }
 
 function getMessage (followerData, messages) {
