@@ -63,13 +63,7 @@ function getUser (user, callback) {
 			return callback(err || "User was not founded.");
 		}
 
-		return callback(null, {
-			username: user,
-			key:  userdata.key,
-			secret: userdata.secret,
-			track: userdata.track,
-			messages: userdata.messages
-		});
+		return callback(null, userdata);
 	});
 }
 

@@ -40,7 +40,8 @@ function getTasks () {
 					// follow users
 					var followTask = Util.clone(task);
 					followTask.follow = getIds(usersToFollow);
-					Lambda.runTask(user, followTask);
+					///////////Lambda.runTask(user, followTask);
+					console.log(followTask);
 
 					// create unfollow task, get rid of the follow and make it unfollow
 					delete task.follow;
@@ -77,7 +78,7 @@ function getTasks () {
 
 Database.create(function(){
 	new CronJob({
-		cronTime: '0 * * * * *',
+		cronTime: '* * * * * *',
 		onTick: getTasks,
 		start: true
 	});

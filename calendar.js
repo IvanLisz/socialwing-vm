@@ -26,7 +26,7 @@ function getMinutes () {
 }
 
 function fillWithFollow (calendar) {
-	var FollowLimit = randomInt(700,1000);
+	var FollowLimit = 1000;//randomInt(900,1000);
 	var FollowHour = Math.floor(FollowLimit/calendar.length);
 
 	var FollowToday = 0;

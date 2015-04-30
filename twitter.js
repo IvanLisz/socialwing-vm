@@ -14,7 +14,7 @@ function stream (user, limit, callback) {
 	var usersToFollow = [];
 	stream.on('tweet', function (tweet) {
 		if (usersToFollow.length < limit) {
-			if (usersToFollow.map(function (uData){ return uData.id }).indexOf(tweet.user.id) >=  0) {
+			if (usersToFollow.map(function (uData){ return uData.id }).indexOf(tweet.user.id) >=  0 || checkDifference(user, tweet.user) == false) {
 				return;
 			}
 			//console.log(tweet.text);
@@ -27,12 +27,18 @@ function stream (user, limit, callback) {
 	});
 }
 
-function parseStreamUser(user) {
+function checkDifference (user , tweetUser) {
+	return Math.floor(tweetUser.friends_count*100/tweetUser.followers_count) >= user.followOnDifference;
+}
+
+function parseStreamUser (user) {
 	return {
 		id: user.id,
 		name: user.name,
 		screen_name: user.screen_name,
-		lang: user.lang.split("-")[0] // if es-MX --> es
+		lang: user.lang.split("-")[0], // if es-MX --> es
+		following: user.friends_count,
+		followers: user.followers_count
 	}
 }
 
