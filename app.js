@@ -72,6 +72,8 @@ function getTasks () {
 				console.log(task);
 				Lambda.runTask(user, task);
 
+				console.log('followers to send message');
+				console.log(followers);
 				sendMessages(user, followers, followData);
 			});
 		});
@@ -101,6 +103,9 @@ function sendMessages (user, followers, followData) {
 					 user.messages[Object.keys(user.messages)[0]])
 		})
 	});
+
+	console.log('*******************run messages');
+	console.log(messages);
 	// message followers
 	Lambda.runMessages(user, messages);
 }
