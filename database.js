@@ -25,7 +25,7 @@ function getTasks (callback) {
 function getOldTasks (callback) {
 	if (!calendar) { return callback('database unready'); }
 	// Go one day backwards
-	var yesterdayMinute = _getNowMinute() - 7200000;
+	var yesterdayMinute = _getNowMinute() - 600000;
 	_getTasksByMinutes(yesterdayMinute, callback);
 }
 
@@ -33,9 +33,9 @@ function _getTasksByMinutes (minutes, callback) {
 
 	console.log('******************');
 	console.log('lower than');
-	console.log(minutes + 60001);
+	console.log(minutes + 60000);
 	console.log('greater than than');
-	console.log(minutes - 1);
+	console.log(minutes);
 
 	calendar.find().each(function(err, data){
 		if (data) {
@@ -49,8 +49,8 @@ function _getTasksByMinutes (minutes, callback) {
 
 	calendar.find({
 		timestamp: {
-			"$lt" : minutes + 60001,
-			"$gt" : minutes - 1
+			"$lt" : minutes + 60000,
+			"$gt" : minutes
 		}
 	}).each(function (err, data) {
 		if (err || !data) {
