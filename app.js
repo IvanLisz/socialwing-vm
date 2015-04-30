@@ -87,9 +87,13 @@ function sendMessages (user, followers, followData) {
 	followers.forEach(function (followerId) {
 
 		var followerData = getFollowerData(followData, followerId);
+		if (|| )
 		messages.push({
 			id: followerData.id,
-			message: getMessage(followerData, user.messages[followerData.lang])
+			message: getMessage(followerData, user.messages[followerData.lang] ||
+					 user.messages.es ||
+					 user.messages.en ||
+					 user.messages[Object.keys(user.messages)[0]])
 		})
 	});
 	// message followers
