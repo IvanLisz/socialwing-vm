@@ -37,16 +37,6 @@ function _getTasksByMinutes (minutes, callback) {
 	console.log('greater than than');
 	console.log(minutes);
 
-	calendar.find().each(function(err, data){
-		if (data) {
-			console.log('calendar task....');
-			console.log(data.timestamp);
-		}
-	});
-	setTimeout(function() {
-		console.log('******************');
-	}, 3000);
-
 	calendar.find({
 		timestamp: {
 			"$lt" : minutes + 60000,
