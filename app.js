@@ -42,13 +42,16 @@ function getTasks () {
 		});
 	});
 
+		console.log('getting old tasks...');
 	Database.getOldTasks(function (err, task) {
 		if (err){
 			if (err != 'Tasks already executed') { console.log(err) };
 			return;
 		}
+		console.log('old tasks...');
+		console.log(task);
 		if (typeof task !== 'object') {
-			console.log('Task to unfollow ' + task + ' is not an object.');
+			return console.log('Task to unfollow ' + task + ' is not an object.');
 		}
 		console.log('getted old task');
 		Database.getUser(task.user, function (err, user){
