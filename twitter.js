@@ -10,18 +10,26 @@ function stream (user, limit, callback) {
 		access_token_secret: user.secret
 	});
 
-	var stream = userTw.stream('statuses/filter', { track: user.track, language: 'es' });
+	var StartStream = Date.now();
+	var stream = userTw.stream('statuses/filter',  { track: user.track, language: user.trackLang });
 	var usersToFollow = [];
 	stream.on('tweet', function (tweet) {
-		if (usersToFollow.length < limit) {
+		var streamTimeOut = (Date.now() - StartStream) < 15000; //pasaron menos de 15 Segundos?
+		if (usersToFollow.length < limit &&  streamTimeOut) {
 			if (usersToFollow.map(function (uData){ return uData.id }).indexOf(tweet.user.id) >=  0 || checkDifference(user, tweet.user) == false) {
 				return;
 			}
 			//console.log(tweet.text);
-
 			usersToFollow.push(parseStreamUser(tweet.user));
 		} else {
 			stream.stop();
+			if(streamTimeOut == false){
+				console.log("*****************WARNING: STREAMING TIMEOUT");
+				//TODO: SEND NOTIFICATION TO USER
+			}else{
+				console.log("*****************STREAMING TIME:")
+				console.log(Date.now() - StartStream);
+			}
 			callback(usersToFollow);
 		}
 	});

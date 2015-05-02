@@ -35,7 +35,6 @@ function getTasks () {
 				console.log(task);
 				Twitter.stream(user, task.follow, function (usersToFollow) {
 					console.log('finished streaming, users to follow:');
-					console.log(getIds(usersToFollow));
 
 					// follow users
 					var followTask = Util.clone(task);
@@ -78,7 +77,7 @@ function getTasks () {
 
 Database.create(function(){
 	new CronJob({
-		cronTime: '0 * * * * *',
+		cronTime: '* * * * * *',
 		onTick: getTasks,
 		start: true
 	});
