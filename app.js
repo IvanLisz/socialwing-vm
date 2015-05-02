@@ -77,7 +77,7 @@ function getTasks () {
 
 Database.create(function(){
 	new CronJob({
-		cronTime: '* * * * * *',
+		cronTime: '0 * * * * *',
 		onTick: getTasks,
 		start: true
 	});
