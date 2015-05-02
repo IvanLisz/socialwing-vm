@@ -1,5 +1,6 @@
 var Twit 		= require('twit'),
-	credentials = require('./credentials');
+	credentials = require('./credentials'),
+	Database		= require('./database');
 
 function stream (user, limit, callback) {
 
@@ -16,13 +17,14 @@ function stream (user, limit, callback) {
 	stream.on('tweet', function (tweet) {
 		var streamTimeOut = (Date.now() - StartStream) < 15000; //pasaron menos de 15 Segundos?
 		if (usersToFollow.length < limit &&  streamTimeOut) {
-			if (usersToFollow.map(function (uData){ return uData.id }).indexOf(tweet.user.id) >=  0 || checkDifference(user, tweet.user) == false) {
+			if (usersToFollow.map(function (uData){ return uData.id }).indexOf(tweet.user.id) >=  0 || _checkDifference(user, tweet.user) == false) {
 				return;
 			}
 			//console.log(tweet.text);
-			usersToFollow.push(parseStreamUser(tweet.user));
+			usersToFollow.push(_parseStreamUser(tweet.user));
 		} else {
 			stream.stop();
+
 			if(streamTimeOut == false){
 				console.log("*****************WARNING: STREAMING TIMEOUT");
 				//TODO: SEND NOTIFICATION TO USER
@@ -30,25 +32,13 @@ function stream (user, limit, callback) {
 				console.log("*****************STREAMING TIME:")
 				console.log(Date.now() - StartStream);
 			}
+
 			callback(usersToFollow);
 		}
 	});
 }
 
-function checkDifference (user , tweetUser) {
-	return Math.floor(tweetUser.friends_count*100/tweetUser.followers_count) >= user.followOnDifference;
-}
 
-function parseStreamUser (user) {
-	return {
-		id: user.id,
-		name: user.name,
-		screen_name: user.screen_name,
-		lang: user.lang.split("-")[0], // if es-MX --> es
-		following: user.friends_count,
-		followers: user.followers_count
-	}
-}
 
 function checkFollowers (user, usersToCheck, callback) {
 
@@ -86,7 +76,43 @@ function checkFollowers (user, usersToCheck, callback) {
 	});
 }
 
+function generateUserStats(user){
+
+	var userTw = new Twit({
+		consumer_key: credentials.APP_TOKEN,
+		consumer_secret: credentials.APP_SECRET,
+		access_token: user.key,
+		access_token_secret: user.secret
+	});
+
+	userTw.get('users/show', { screen_name: user.username }, function (err, userData){
+		if (err) {
+			console.log('Error while looking up status of: ' + user.username);
+			return;
+		}
+
+		Database.saveUserStats(user.username, userData);
+	});
+
+}
+
+function _checkDifference (user , tweetUser) {
+	return Math.floor(tweetUser.friends_count*100/tweetUser.followers_count) >= user.followOnDifference;
+}
+
+function _parseStreamUser (user) {
+	return {
+		id: user.id,
+		name: user.name,
+		screen_name: user.screen_name,
+		lang: user.lang.split("-")[0], // if es-MX --> es
+		following: user.friends_count,
+		followers: user.followers_count
+	}
+}
+
 module.exports = {
 	stream: stream,
-	checkFollowers: checkFollowers
+	checkFollowers: checkFollowers,
+	generateUserStats: generateUserStats
 };

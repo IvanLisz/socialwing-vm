@@ -1,4 +1,5 @@
-var Database = require('./database.js');
+var Twitter 		= require('./twitter'),
+	Database		= require('./database');
 
 function getMinutes () {
 	var minuteTMP = [];
@@ -65,6 +66,7 @@ function createCalendar (users, callback) {
 		fillWithFollow(calendar);
 		fillWithUser(calendar, user.username);
 		usersCalendar = usersCalendar.concat(calendar);
+		Twitter.generateUserStats(user);
 	});
 
 	return callback(usersCalendar);

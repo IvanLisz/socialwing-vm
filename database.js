@@ -12,6 +12,7 @@ function create (callback) {
 		DB = db;
 		calendar = db.collection('calendar');
 		users = db.collection('users');
+		stats = db.collection('stats');
 		callback();
 	});
 }
@@ -87,11 +88,22 @@ function sendCalendar (userCalendar) {
 	calendar.insert(userCalendar);
 }
 
+
+function saveUserStats(name, userData) {
+	stats.insert({
+		username: name,
+		followers: userData.followers_count,
+		following: userData.friends_count,
+		timestamp: Date.now()
+	});
+}
+
 module.exports = {
 	create: create,
 	getTasks: getTasks,
 	createUnfollowTask: createUnfollowTask,
 	getUser: getUser,
 	getUsers: getUsers,
-	sendCalendar: sendCalendar
+	sendCalendar: sendCalendar,
+	saveUserStats: saveUserStats
 };
