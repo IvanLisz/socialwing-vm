@@ -110,14 +110,10 @@ function sendMessages (user, followers, followData) {
 }
 
 function getMessage (followerData, messages) {
-	var msg = messages[randomInt(0, messages.length -1)]
+	var msg = messages[Util.randomInt(0, messages.length -1)]
 			.replace("%screen_name", followerData.screen_name)
 			.replace("%full_name", followerData.name)
 			.replace("%first_name", followerData.name.split(' ')[0] || followerData.name)
 			.replace("%last_name", followerData.name.split(' ')[1] || followerData.name);
 	return msg;
-}
-
-function randomInt (min,max) {
-	return Math.floor(Math.random()*(max-min+1)+min);
 }

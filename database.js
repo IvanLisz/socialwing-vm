@@ -89,7 +89,7 @@ function sendCalendar (userCalendar) {
 }
 
 
-function saveUserStats(name, userData) {
+function saveUserStats (name, userData) {
 	stats.insert({
 		username: name,
 		followers: userData.followers_count,

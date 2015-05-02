@@ -76,8 +76,7 @@ function checkFollowers (user, usersToCheck, callback) {
 	});
 }
 
-function generateUserStats(user){
-
+function generateUserStats (user) {
 	var userTw = new Twit({
 		consumer_key: credentials.APP_TOKEN,
 		consumer_secret: credentials.APP_SECRET,
@@ -93,7 +92,6 @@ function generateUserStats(user){
 
 		Database.saveUserStats(user.username, userData);
 	});
-
 }
 
 function _checkDifference (user , tweetUser) {

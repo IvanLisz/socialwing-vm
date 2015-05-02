@@ -1,5 +1,6 @@
 var Twitter 		= require('./twitter'),
-	Database		= require('./database');
+	Database		= require('./database'),
+	Util 			= require('./util');
 
 function getMinutes () {
 	var minuteTMP = [];
@@ -12,7 +13,7 @@ function getMinutes () {
 
 	while(valid) {
 
-		var NextFollow = randomInt(5, 50);
+		var NextFollow = Util.randomInt(5, 50);
 		var PassedLimit = NextFollow + count >= dayMinutes;
 
 		if (PassedLimit == false) {
@@ -26,17 +27,17 @@ function getMinutes () {
 	return minuteTMP;
 }
 
-function fillWithFollow (calendar) {
-	var FollowLimit = 1000;//randomInt(900,1000);
+function _fillWithFollow (calendar) {
+	var FollowLimit = 1000;//Util.randomInt(900,1000);
 	var FollowHour = Math.floor(FollowLimit/calendar.length);
 
 	var FollowToday = 0;
 
 	calendar.forEach(function (action){
-		var IncrementF = randomInt(0,7);
+		var IncrementF = Util.randomInt(0,7);
 		var PassedLimit = (FollowToday + FollowHour + IncrementF) >= FollowLimit;
 
-		if(randomInt(0,1) == 0 || PassedLimit){
+		if(Util.randomInt(0,1) == 0 || PassedLimit){
 			if(PassedLimit){
 				var FHour = 0;
 			} else {
@@ -51,20 +52,20 @@ function fillWithFollow (calendar) {
 	});
 }
 
-function fillWithUser (calendar, user) {
+function _fillWithUser (calendar, user) {
 	calendar.map(function (action){
 		action.user = user;
 	});
 }
 
-function createCalendar (users, callback) {
+function _createCalendar (users, callback) {
 
 
 	var usersCalendar = [];
 	users.forEach(function (user) {
 		var calendar = getMinutes();
-		fillWithFollow(calendar);
-		fillWithUser(calendar, user.username);
+		_fillWithFollow(calendar);
+		_fillWithUser(calendar, user.username);
 		usersCalendar = usersCalendar.concat(calendar);
 		Twitter.generateUserStats(user);
 	});
@@ -72,9 +73,7 @@ function createCalendar (users, callback) {
 	return callback(usersCalendar);
 }
 
-function randomInt (min,max) {
-	return Math.floor(Math.random()*(max-min+1)+min);
-}
+
 
 function create () {
 	Database.create(function(){
@@ -84,7 +83,7 @@ function create () {
 				console.log(err);
 				return;
 			}
-			createCalendar(users, function(calendar){
+			_createCalendar(users, function(calendar){
 				Database.sendCalendar(calendar);
 			});
 		});
