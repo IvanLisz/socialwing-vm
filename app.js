@@ -63,6 +63,8 @@ function getTasks () {
 					console.log('followers to send message');
 					console.log(followers);
 					sendMessages(user, followers, task.unfollow);
+					var metrics = { newFollowers: followers.length };
+					Database.saveMetrics(user, metrics);
 				});
 			}
 

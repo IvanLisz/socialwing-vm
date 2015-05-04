@@ -107,8 +107,16 @@ function saveDailyStats (user, userData) {
 	users.update({ _id: user._id }, user);
 }
 
-function saveMetrics(user){
+function saveMetrics(user, newMetrics){
+	if(!newMetrics || !user) {
+		return;
+	}
 
+	Object.keys(newMetrics).forEach(function (property){
+		user.metrics[property] = user.metrics[property] + newMetrics[property];
+	});
+
+	users.update({ _id: user._id }, user);
 }
 
 function deleteTask (task) {
@@ -124,5 +132,6 @@ module.exports = {
 	getUsers: getUsers,
 	sendCalendar: sendCalendar,
 	saveDailyStats: saveDailyStats,
-	deleteTask: deleteTask
+	deleteTask: deleteTask,
+	saveMetrics: saveMetrics
 };

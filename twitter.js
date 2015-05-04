@@ -36,7 +36,8 @@ function stream (user, limit, callback) {
 				console.log("*****************STREAMING TIME:")
 				console.log(Date.now() - StartStream);
 			}
-
+			var metrics = { peopleReached: usersToFollow.length };
+			Database.saveMetrics(user, metrics);
 			callback(usersToFollow);
 		}
 	});
