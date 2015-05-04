@@ -50,7 +50,7 @@ function _getTasksByMinutes (minutes, callback) {
 		if (err || !data) {
 			return callback(err || 'No task founded');
 		}
-		calendar.remove({ "_id": data._id });
+		deleteTask(data);
 		return callback(null, data);
 	});
 }

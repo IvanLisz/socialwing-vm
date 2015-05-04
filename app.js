@@ -32,9 +32,10 @@ function getTasks () {
 				console.log(err);
 				return;
 			}
-			console.log('follow ' + task.follow + ' with ' + task.user.screen_name + ' (' + task.user.id + ')');
 
-			if (task.follow) {
+			if (task.follow && task.follow.length) {
+				console.log('follow ' + task.follow + ' with ' + task.user.screen_name + ' (' + task.user.id + ')');
+
 				console.log("start streaming");
 				console.log(task);
 				Twitter.stream(user, task.follow, function (usersToFollow) {
@@ -72,8 +73,12 @@ function getTasks () {
 					console.log('followers to send message');
 					console.log(followers);
 					sendMessages(user, followers, task.unfollow);
-					Database.deleteTask(task);
 				});
+			}
+
+
+			if (task.action && task.action.length) {
+				Database.sendCalendar(Calendar.createUserCalendar(user));
 			}
 
 		});
