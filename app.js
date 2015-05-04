@@ -33,7 +33,8 @@ function getTasks () {
 				return;
 			}
 
-			if (task.follow && task.follow.length) {
+
+			if (task.follow) {
 				console.log('follow ' + task.follow + ' with ' + task.user.screen_name + ' (' + task.user.id + ')');
 
 				console.log("start streaming");
