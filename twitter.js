@@ -1,5 +1,6 @@
 var Twit 		= require('twit'),
 	credentials = require('./credentials'),
+	Util 			= require('./util'),
 	Database		= require('./database');
 
 function stream (user, limit, callback) {
@@ -18,10 +19,7 @@ function stream (user, limit, callback) {
 	var stream = userTw.stream('statuses/filter',  { track: user.settings.track.join(), language: user.settings.trackLangs.join() });
 	var usersToFollow = [];
 	stream.on('tweet', function (tweet) {
-
-		console.log(tweet.text);
-
-		var streamTimeOut = (Date.now() - StartStream) < 15000; //pasaron menos de 15 Segundos?
+		var streamTimeOut = (Date.now() - StartStream) < 20000; //pasaron menos de 20 Segundos?
 		if (usersToFollow.length < limit &&  streamTimeOut) {
 			if (usersToFollow.map(function (uData){ return uData.id }).indexOf(tweet.user.id) >=  0 || !_checkDifference(user, tweet.user, 'followOnDifference') || !_filterUser(tweet)) {
 				return;
@@ -47,7 +45,7 @@ function stream (user, limit, callback) {
 
 function _filterUser (tweet) {
 	var permited = true;
-	var BlackList = ['+18', 'porn', 'sex', 'gay', 'lesbian', 'xxx', 'calient', 'puta', 'puto', 'cunt', 'fuck', 'milf'];
+	var BlackList = ['+18', 'porn', 'sex', 'gay', 'lesbian', 'xxx', 'calient', 'puta', 'puto', 'cunt', 'fuck', 'milf', 'Pics', 'hot', 'chicks'];
 
 	checkOnBlackList(tweet.text);
 	['name', 'screen_name', 'description'].forEach(function (property) {
@@ -56,7 +54,7 @@ function _filterUser (tweet) {
 
 	function checkOnBlackList (data) {
 		BlackList.forEach(function (word){
-			if (data.indexOf(word) !== -1){
+			if (data && data.indexOf(word) !== -1){
 				return permited = false;
 			}
 		});
@@ -67,8 +65,9 @@ function _filterUser (tweet) {
 }
 
 
-function checkFollowers (user, usersToCheck, callback) {
+function checkFollowers (user, unfollow, callback) {
 
+	usersToCheck = Util.getIds(unfollow);
 	if (usersToCheck.constructor !== Array) {
 		return callback('Need usersToCheck to be an array');
 	}
@@ -79,8 +78,6 @@ function checkFollowers (user, usersToCheck, callback) {
 		access_token: user.token,
 		access_token_secret: user.tokenSecret
 	});
-	console.log('usersToCheck');
-	console.log(usersToCheck);
 	userTw.get('friendships/lookup', { user_id: usersToCheck.join() }, function (err, usersChecked){
 		if (err) {
 			return callback('Error while looking up friendships of: ' + usersToCheck.join());
@@ -89,8 +86,8 @@ function checkFollowers (user, usersToCheck, callback) {
 		var followers = [];
 		console.log('usersChecked');
 		console.log(usersChecked);
-		usersChecked.forEach(function (userChecked) {
-			if (userChecked.connections.indexOf('followed_by') === -1 || _checkDifference(user, userChecked, 'unfollowOnDifference')) {
+		usersChecked.forEach(function (userChecked, index) {
+			if (userChecked.connections.indexOf('followed_by') === -1 || _checkDifference(user, unfollow[index], 'unfollowOnDifference')) {
 				console.log('unfollow!');
 				notFollowers.push(userChecked.id);
 			} else {
@@ -131,8 +128,8 @@ function _parseStreamUser (user) {
 		name: user.name,
 		screen_name: user.screen_name,
 		lang: user.lang.split("-")[0], // if es-MX --> es
-		following: user.friends_count,
-		followers: user.followers_count
+		friends_count: user.friends_count,
+		followers_count: user.followers_count
 	}
 }
 

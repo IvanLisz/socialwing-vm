@@ -8,11 +8,6 @@ var CronJob 		= require('cron').CronJob,
 	Calendar		= require('./calendar'),
 	lastCalendar	= null;
 
-function _getIds (users) {
-	return users.map(function(user){
-		return user.id;
-	});
-}
 
 function getTasks () {
 
@@ -38,7 +33,7 @@ function getTasks () {
 
 					// follow users
 					var followTask = Util.clone(task);
-					followTask.follow = _getIds(usersToFollow);
+					followTask.follow = Util.getIds(usersToFollow);
 					Lambda.runTask(user, followTask);
 					console.log(followTask);
 
@@ -52,8 +47,8 @@ function getTasks () {
 
 			if (task.unfollow && task.unfollow.length) {
 				console.log('check to unfollow');
-				console.log(_getIds(task.unfollow));
-				Twitter.checkFollowers(user, _getIds(task.unfollow), function (err, notFollowers, followers) {
+				console.log(Util.getIds(task.unfollow));
+				Twitter.checkFollowers(user, task.unfollow, function (err, notFollowers, followers) {
 					if (err) {
 						console.log(err);
 						return;
@@ -94,6 +89,10 @@ Database.create(function(){
 function sendMessages (user, followers, followData) {
 
 	var messages = [];
+
+	if (!user.settings.messages) {
+		return;
+	}
 
 	followers.forEach(function (followerId) {
 		followData.forEach(function (followerData){

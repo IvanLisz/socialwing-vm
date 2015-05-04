@@ -8,6 +8,12 @@ function randomInt (min,max) {
 }
 
 
+function getIds (users) {
+	return users.map(function(user){
+		return user.id;
+	});
+}
+
 function removeDiacritics (str) {
 
   var defaultDiacriticsRemovalMap = [
@@ -107,5 +113,6 @@ function removeDiacritics (str) {
 module.exports = {
 	clone: clone,
 	randomInt: randomInt,
-	removeDiacritics: removeDiacritics
+	removeDiacritics: removeDiacritics,
+	getIds: getIds
 }
