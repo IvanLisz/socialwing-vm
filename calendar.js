@@ -12,7 +12,6 @@ function getMinutes () {
 	var timeStamp = Date.now();
 
 	while(valid) {
-
 		var NextFollow = Util.randomInt(5, 50);
 		var PassedLimit = NextFollow + count >= dayMinutes;
 
@@ -85,6 +84,7 @@ function _createCalendar (users, callback) {
 
 
 function createUserCalendar (user) {
+	console.log('crete user calendar');
 	var calendar = getMinutes();
 	_fillWithFollow(calendar);
 	_generateNewCalendarTask(calendar);
