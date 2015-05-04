@@ -15,11 +15,6 @@ function _getIds (users) {
 }
 
 function getTasks () {
-	var time = new Date();
-	if (time.getHours() === 0 &&  time.getMinutes() === 0 && lastCalendar != time.getDay()) {
-		Calendar.create();
-		lastCalendar = time.getDay();
-	}
 
 	Database.getTasks(function (err, task) {
 		if (err){
@@ -105,10 +100,10 @@ function sendMessages (user, followers, followData) {
 			if (followerId === followerData.id) {
 				messages.push({
 					id: followerData.id,
-					message: getMessage(followerData, user.settings.messages[followerData.lang] ||
+					message: Util.removeDiacritics(getMessage(followerData, user.settings.messages[followerData.lang] ||
 							 user.settings.messages.es ||
 							 user.settings.messages.en ||
-							 user.settings.messages[Object.keys(user.settings.messages)[0]])
+							 user.settings.messages[Object.keys(user.settings.messages)[0]]))
 				});
 			}
 		});
