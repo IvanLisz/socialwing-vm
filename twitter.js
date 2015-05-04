@@ -100,7 +100,7 @@ function checkFollowers (user, unfollow, callback) {
 	});
 }
 
-function generateUserStats (user) {
+function generateDailyStats (user) {
 	var userTw = new Twit({
 		consumer_key: credentials.APP_TOKEN,
 		consumer_secret: credentials.APP_SECRET,
@@ -114,7 +114,7 @@ function generateUserStats (user) {
 			return;
 		}
 
-		Database.addUserStats(user, userData);
+		Database.saveDailyStats(user, userData);
 	});
 }
 
@@ -136,5 +136,5 @@ function _parseStreamUser (user) {
 module.exports = {
 	stream: stream,
 	checkFollowers: checkFollowers,
-	generateUserStats: generateUserStats
+	generateDailyStats: generateDailyStats
 };

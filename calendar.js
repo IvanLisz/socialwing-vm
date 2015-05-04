@@ -89,7 +89,7 @@ function createUserCalendar (user) {
 	_fillWithFollow(calendar);
 	_generateNewCalendarTask(calendar);
 	_fillWithUser(calendar, user.twitter.id, user.twitter.screen_name);
-	Twitter.generateUserStats(user);
+	Twitter.generateDailyStats(user);
 	return calendar;
 
 }

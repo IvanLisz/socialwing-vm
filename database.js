@@ -95,7 +95,7 @@ function sendCalendar (userCalendar) {
 }
 
 
-function addUserStats (user, userData) {
+function saveDailyStats (user, userData) {
 	if (!user.metrics.stats) {
 		user.metrics.stats = [];
 	}
@@ -104,8 +104,11 @@ function addUserStats (user, userData) {
 		following: userData.friends_count,
 		timestamp: Date.now()
 	});
-
 	users.update({ _id: user._id }, user);
+}
+
+function saveMetrics(user){
+
 }
 
 function deleteTask (task) {
@@ -120,6 +123,6 @@ module.exports = {
 	getUser: getUser,
 	getUsers: getUsers,
 	sendCalendar: sendCalendar,
-	addUserStats: addUserStats,
+	saveDailyStats: saveDailyStats,
 	deleteTask: deleteTask
 };
