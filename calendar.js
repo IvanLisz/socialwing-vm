@@ -28,7 +28,7 @@ function getMinutes () {
 }
 
 function _fillWithFollow (calendar) {
-	var FollowLimit = 1000;//Util.randomInt(900,1000);
+	var FollowLimit = Util.randomInt(900,1000);
 	var FollowHour = Math.floor(FollowLimit/calendar.length);
 
 	var FollowToday = 0;
@@ -52,9 +52,12 @@ function _fillWithFollow (calendar) {
 	});
 }
 
-function _fillWithUser (calendar, user) {
+function _fillWithUser (calendar, uid, user) {
 	calendar.map(function (action){
-		action.user = user;
+		action.user = {
+			screen_name: user,
+			id: uid,
+		}
 	});
 }
 
@@ -65,7 +68,7 @@ function _createCalendar (users, callback) {
 	users.forEach(function (user) {
 		var calendar = getMinutes();
 		_fillWithFollow(calendar);
-		_fillWithUser(calendar, user.username);
+		_fillWithUser(calendar, user.twitter.id, user.twitter.screen_name);
 		usersCalendar = usersCalendar.concat(calendar);
 		Twitter.generateUserStats(user);
 	});

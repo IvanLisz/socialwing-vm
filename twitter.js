@@ -7,12 +7,13 @@ function stream (user, limit, callback) {
 	var userTw = new Twit({
 		consumer_key: credentials.APP_TOKEN,
 		consumer_secret: credentials.APP_SECRET,
-		access_token: user.key,
-		access_token_secret: user.secret
+		access_token: user.token,
+		access_token_secret: user.tokenSecret
 	});
 
 	var StartStream = Date.now();
-	var stream = userTw.stream('statuses/filter',  { track: user.track, language: user.trackLang });
+
+	var stream = userTw.stream('statuses/filter',  { track: user.settings.track.join(), language: user.settings.trackLangs.join() });
 	var usersToFollow = [];
 	stream.on('tweet', function (tweet) {
 		var streamTimeOut = (Date.now() - StartStream) < 15000; //pasaron menos de 15 Segundos?
@@ -49,8 +50,8 @@ function checkFollowers (user, usersToCheck, callback) {
 	var userTw = new Twit({
 		consumer_key: credentials.APP_TOKEN,
 		consumer_secret: credentials.APP_SECRET,
-		access_token: user.key,
-		access_token_secret: user.secret
+		access_token: user.token,
+		access_token_secret: user.tokenSecret
 	});
 	console.log('usersToCheck');
 	console.log(usersToCheck);
@@ -80,22 +81,22 @@ function generateUserStats (user) {
 	var userTw = new Twit({
 		consumer_key: credentials.APP_TOKEN,
 		consumer_secret: credentials.APP_SECRET,
-		access_token: user.key,
-		access_token_secret: user.secret
+		access_token: user.token,
+		access_token_secret: user.tokenSecret
 	});
 
-	userTw.get('users/show', { screen_name: user.username }, function (err, userData){
+	userTw.get('users/show', { id: user.twitter.id }, function (err, userData){
 		if (err) {
-			console.log('Error while looking up status of: ' + user.username);
+			console.log('Error while looking up status of' + user.twitter.screen_name + ' (' + user.twitter.id + ')');
 			return;
 		}
 
-		Database.saveUserStats(user.username, userData);
+		Database.addUserStats(user, userData);
 	});
 }
 
 function _checkDifference (user , tweetUser) {
-	return Math.floor(tweetUser.friends_count*100/tweetUser.followers_count) >= user.followOnDifference;
+	return Math.floor(tweetUser.friends_count*100/tweetUser.followers_count) >= user.settings.followOnDifference;
 }
 
 function _parseStreamUser (user) {

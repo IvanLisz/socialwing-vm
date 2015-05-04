@@ -8,7 +8,7 @@ var CronJob 		= require('cron').CronJob,
 	Calendar		= require('./calendar'),
 	lastCalendar	= null;
 
-function getIds (users) {
+function _getIds (users) {
 	return users.map(function(user){
 		return user.id;
 	});
@@ -27,8 +27,12 @@ function getTasks () {
 			if (err != 'Tasks already executed') { console.log(err) };
 			return;
 		}
-		Database.getUser(task.user, function (err, user){
-			console.log('follow ' + task.follow + ' with ' + task.user);
+		Database.getUser(task.user.id, function (err, user){
+			if (err){
+				console.log(err);
+				return;
+			}
+			console.log('follow ' + task.follow + ' with ' + task.user.screen_name + ' (' + task.user.id + ')');
 
 			if (task.follow) {
 				console.log("start streaming");
@@ -38,7 +42,7 @@ function getTasks () {
 
 					// follow users
 					var followTask = Util.clone(task);
-					followTask.follow = getIds(usersToFollow);
+					followTask.follow = _getIds(usersToFollow);
 					Lambda.runTask(user, followTask);
 					console.log(followTask);
 
@@ -52,8 +56,8 @@ function getTasks () {
 
 			if (task.unfollow && task.unfollow.length) {
 				console.log('check to unfollow');
-				console.log(getIds(task.unfollow));
-				Twitter.checkFollowers(user, getIds(task.unfollow), function (err, notFollowers, followers) {
+				console.log(_getIds(task.unfollow));
+				Twitter.checkFollowers(user, _getIds(task.unfollow), function (err, notFollowers, followers) {
 					if (err) {
 						console.log(err);
 						return;
@@ -68,6 +72,7 @@ function getTasks () {
 					console.log('followers to send message');
 					console.log(followers);
 					sendMessages(user, followers, task.unfollow);
+					Database.deleteTask(task);
 				});
 			}
 
@@ -77,7 +82,7 @@ function getTasks () {
 
 Database.create(function(){
 	new CronJob({
-		cronTime: '0 * * * * *',
+		cronTime: '* * * * * *',
 		onTick: getTasks,
 		start: true
 	});
@@ -94,10 +99,10 @@ function sendMessages (user, followers, followData) {
 			if (followerId === followerData.id) {
 				messages.push({
 					id: followerData.id,
-					message: getMessage(followerData, user.messages[followerData.lang] ||
-							 user.messages.es ||
-							 user.messages.en ||
-							 user.messages[Object.keys(user.messages)[0]])
+					message: getMessage(followerData, user.settings.messages[followerData.lang] ||
+							 user.settings.messages.es ||
+							 user.settings.messages.en ||
+							 user.settings.messages[Object.keys(user.settings.messages)[0]])
 				});
 			}
 		});

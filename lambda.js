@@ -24,14 +24,14 @@ function runTask (user, task) {
 		console.log('no task in aws lambda');
 		return;
 	}
-	console.log('Task to Lambda of user: ' + user.username);
+	console.log('Task to Lambda of user: ' + user.twitter.screen_name);
 	console.log(task);
 
 	var taskCredentials = {
 		consumer_key: credentials.APP_TOKEN,
 		consumer_secret: credentials.APP_SECRET,
-		access_token: user.key,
-		access_token_secret: user.secret
+		access_token: user.token,
+		access_token_secret: user.tokenSecret
 	};
 
 	cloudedTask(task, taskCredentials, function(){});
@@ -43,13 +43,13 @@ function runMessages (user, messages) {
 		console.log('no task in aws lambda');
 		return;
 	}
-	console.log('Task to Lambda of user: ' + user.username);
+	console.log('Task to Lambda of user: ' + user.twitter.screen_name);
 
 	var taskCredentials = {
 		consumer_key: credentials.APP_TOKEN,
 		consumer_secret: credentials.APP_SECRET,
-		access_token: user.key,
-		access_token_secret: user.secret
+		access_token: user.token,
+		access_token_secret: user.tokenSecret
 	};
 
 	cloudedMessages(messages, taskCredentials, function(){});

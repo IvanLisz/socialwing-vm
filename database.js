@@ -12,7 +12,6 @@ function create (callback) {
 		DB = db;
 		calendar = db.collection('calendar');
 		users = db.collection('users');
-		stats = db.collection('stats');
 		callback();
 	});
 }
@@ -57,11 +56,11 @@ function createUnfollowTask (task) {
 	calendar.insert(task);
 }
 
-function getUser (user, callback) {
+function getUser (id, callback) {
 
-	users.findOne({ username: user }, function(err, userdata) {
+	users.findOne({ 'twitter.id': id }, function(err, userdata) {
 		if (err || !userdata) {
-			return callback(err || "User was not founded.");
+			return callback(err || 'UserID ('+ id + ') was not founded.');
 		}
 
 		return callback(null, userdata);
@@ -89,13 +88,21 @@ function sendCalendar (userCalendar) {
 }
 
 
-function saveUserStats (name, userData) {
-	stats.insert({
-		username: name,
+function addUserStats (user, userData) {
+	if (!user.metrics.stats) {
+		user.metrics.stats = [];
+	}
+	user.metrics.stats.push({
 		followers: userData.followers_count,
 		following: userData.friends_count,
 		timestamp: Date.now()
 	});
+
+	users.update({ _id: user._id }, user);
+}
+
+function deleteTask (task) {
+	calendar.remove({ "_id": task._id });
 }
 
 module.exports = {
@@ -105,5 +112,6 @@ module.exports = {
 	getUser: getUser,
 	getUsers: getUsers,
 	sendCalendar: sendCalendar,
-	saveUserStats: saveUserStats
+	addUserStats: addUserStats,
+	deleteTask: deleteTask
 };
