@@ -18,7 +18,10 @@ function stream (user, limit, callback) {
 	var stream = userTw.stream('statuses/filter',  { track: user.settings.track.join(), language: user.settings.trackLangs.join() });
 	var usersToFollow = [];
 	stream.on('tweet', function (tweet) {
-		var streamTimeOut = (Date.now() - StartStream) < 2000; //pasaron menos de 15 Segundos?
+
+		console.log(tweet.text);
+
+		var streamTimeOut = (Date.now() - StartStream) < 15000; //pasaron menos de 15 Segundos?
 		if (usersToFollow.length < limit &&  streamTimeOut) {
 			if (usersToFollow.map(function (uData){ return uData.id }).indexOf(tweet.user.id) >=  0 || !_checkDifference(user, tweet.user, 'followOnDifference') || !_filterUser(tweet)) {
 				return;
