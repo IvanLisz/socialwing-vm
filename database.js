@@ -6,14 +6,25 @@ var processes = [];
 var DB;
 
 function create (callback) {
-	// Connection URL
-	var url = 'mongodb://localhost:27017/monk';
-	MongoClient.connect(url, function(err, db) {
-		DB = db;
-		calendar = db.collection('calendar');
-		users = db.collection('users');
+
+	if (!DB) {
+		// Connection URL
+		var url = 'mongodb://localhost:27017/monk';
+		MongoClient.connect(url, function(err, db) {
+			DB = db;
+			calendar = db.collection('calendar');
+			users = db.collection('users');
+			callback();
+		});
+	}else{
+		console.log("DB ALREADY OPENED");
 		callback();
-	});
+	}
+}
+
+
+function close(){
+	DB.close();
 }
 
 function getTasks (callback) {
@@ -77,12 +88,6 @@ function getUsers (callback) {
 }
 
 function sendCalendar (userCalendar) {
-	// Remove the tasks scheduled 2 days ago
-	calendar.remove({
-		timestamp: {
-			"$lt" : Date.now - (86400000 * 2)
-		}
-	});
 	// Insert new calendar
 	calendar.insert(userCalendar);
 }
@@ -107,6 +112,7 @@ function deleteTask (task) {
 
 module.exports = {
 	create: create,
+	close: close,
 	getTasks: getTasks,
 	createUnfollowTask: createUnfollowTask,
 	getUser: getUser,

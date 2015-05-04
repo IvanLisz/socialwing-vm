@@ -33,7 +33,7 @@ function _fillWithFollow (calendar) {
 
 	var FollowToday = 0;
 
-	calendar.forEach(function (action){
+	calendar.forEach(function (action) {
 		var IncrementF = Util.randomInt(0,7);
 		var PassedLimit = (FollowToday + FollowHour + IncrementF) >= FollowLimit;
 
@@ -61,21 +61,38 @@ function _fillWithUser (calendar, uid, user) {
 	});
 }
 
+
+function _generateNewCalendarTask(calendar) {
+	calendar.push({
+		timestamp: Date.now() + 86400000,
+		action: "createCalendar"
+	})
+}
+
 function _createCalendar (users, callback) {
 
 
 	var usersCalendar = [];
 	users.forEach(function (user) {
-		var calendar = getMinutes();
-		_fillWithFollow(calendar);
-		_fillWithUser(calendar, user.twitter.id, user.twitter.screen_name);
-		usersCalendar = usersCalendar.concat(calendar);
-		Twitter.generateUserStats(user);
+
+		usersCalendar = usersCalendar.concat(createUserCalendar(user));
+
 	});
 
 	return callback(usersCalendar);
 }
 
+
+
+function createUserCalendar (user) {
+	var calendar = getMinutes();
+	_fillWithFollow(calendar);
+	_generateNewCalendarTask(calendar);
+	_fillWithUser(calendar, user.twitter.id, user.twitter.screen_name);
+	//Twitter.generateUserStats(user);
+	return calendar;
+
+}
 
 
 function create () {
@@ -94,7 +111,7 @@ function create () {
 }
 
 module.exports = {
-	create: create
+	create: create,
+	createUserCalendar: createUserCalendar
 }
 
-if (process.argv[2] == 'create') { create(); }
