@@ -4,8 +4,8 @@ Database		= require('./database');
 function generateUserCalendar (user) {
 
 	Database.create(function (){
-		Database.sendCalendar(Calendar.createUserCalendar(user));
-		Database.close();
+		Database.sendCalendar(Calendar.createUserCalendar(user, true));
+		//Database.close();
 	});
 }
 

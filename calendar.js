@@ -2,7 +2,7 @@ var Twitter 		= require('./twitter'),
 	Database		= require('./database'),
 	Util 			= require('./util');
 
-function getMinutes () {
+function getMinutes (firstCalendar) {
 	var minuteTMP = [];
 
 	var count = 0;
@@ -16,8 +16,13 @@ function getMinutes () {
 		var PassedLimit = NextFollow + count >= dayMinutes;
 
 		if (PassedLimit == false) {
-			count = count + NextFollow;
-			minuteTMP.push({ timestamp: timeStamp + count * 60000 });
+			if (firstCalendar && count == 0) {
+				count = count + 1;
+				minuteTMP.push({ timestamp: timeStamp });
+			} else {
+				count = count + NextFollow;
+				minuteTMP.push({ timestamp: timeStamp + count * 60000 });
+			}
 		} else {
 			valid = false;
 		}
@@ -26,7 +31,7 @@ function getMinutes () {
 	return minuteTMP;
 }
 
-function _fillWithFollow (calendar) {
+function _fillWithFollow (calendar, firstCalendar) {
 	var FollowLimit = Util.randomInt(900,1000);
 	var FollowHour = Math.floor(FollowLimit/calendar.length);
 
@@ -36,15 +41,19 @@ function _fillWithFollow (calendar) {
 		var IncrementF = Util.randomInt(0,7);
 		var PassedLimit = (FollowToday + FollowHour + IncrementF) >= FollowLimit;
 
-		if(Util.randomInt(0,1) == 0 || PassedLimit){
-			if(PassedLimit){
-				var FHour = 0;
-			} else {
-				var FHour = FollowHour - IncrementF;
-			}
-
+		if(firstCalendar && FollowToday == 0){
+			FHour = Util.randomInt(35,45);
 		}else{
-			var FHour = FollowHour + IncrementF;
+			if(Util.randomInt(0,1) == 0 || PassedLimit){
+				if(PassedLimit){
+					var FHour = 0;
+				} else {
+					var FHour = FollowHour - IncrementF;
+				}
+
+			}else{
+				var FHour = FollowHour + IncrementF;
+			}
 		}
 		action.follow = FHour;
 		FollowToday = FollowToday + FHour;
@@ -83,10 +92,10 @@ function _createCalendar (users, callback) {
 
 
 
-function createUserCalendar (user) {
+function createUserCalendar (user, firstCalendar) {
 	console.log('crete user calendar');
-	var calendar = getMinutes();
-	_fillWithFollow(calendar);
+	var calendar = getMinutes(firstCalendar);
+	_fillWithFollow(calendar, firstCalendar);
 	_generateNewCalendarTask(calendar);
 	_fillWithUser(calendar, user.twitter.id, user.twitter.screen_name);
 	Twitter.generateDailyStats(user);
