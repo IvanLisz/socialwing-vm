@@ -17,7 +17,6 @@ function _getIds (users) {
 function getTasks () {
 	var time = new Date();
 	if (time.getHours() === 0 &&  time.getMinutes() === 0 && lastCalendar != time.getDay()) {
-		console.log("Creando calendario");
 		Calendar.create();
 		lastCalendar = time.getDay();
 	}
@@ -79,6 +78,7 @@ function getTasks () {
 
 
 			if (task.action && task.action.length) {
+				console.log("Creando calendario para: " + user.twitter.screen_name + ' (' + user.twitter.id + ')');
 				Database.sendCalendar(Calendar.createUserCalendar(user));
 			}
 
