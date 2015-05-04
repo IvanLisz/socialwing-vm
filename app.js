@@ -122,3 +122,5 @@ function getMessage (followerData, messages) {
 			.replace("%last_name", followerData.name.split(' ')[1] || followerData.name);
 	return msg;
 }
+
+

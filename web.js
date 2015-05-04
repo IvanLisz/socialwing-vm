@@ -1,7 +1,7 @@
 Calendar		= require('./calendar'),
 Database		= require('./database');
 
-function generateUserCalendar(user){
+function generateUserCalendar (user) {
 
 	Database.create(function (){
 		Database.sendCalendar(Calendar.createUserCalendar(user));
