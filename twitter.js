@@ -18,7 +18,7 @@ function stream (user, limit, callback) {
 	stream.on('tweet', function (tweet) {
 		var streamTimeOut = (Date.now() - StartStream) < 15000; //pasaron menos de 15 Segundos?
 		if (usersToFollow.length < limit &&  streamTimeOut) {
-			if (usersToFollow.map(function (uData){ return uData.id }).indexOf(tweet.user.id) >=  0 || _checkDifference(user, tweet.user) == false) {
+			if (usersToFollow.map(function (uData){ return uData.id }).indexOf(tweet.user.id) >=  0 || !_checkDifference(user, tweet.user) || !_filterUser(tweet)) {
 				return;
 			}
 			//console.log(tweet.text);
@@ -37,6 +37,28 @@ function stream (user, limit, callback) {
 			callback(usersToFollow);
 		}
 	});
+}
+
+
+function _filterUser (tweet) {
+	var permited = true;
+	var BlackList = ['+18', 'porn', 'sex', 'gay', 'lesbian', 'xxx', 'calient', 'puta', 'puto', 'cunt', 'fuck', 'milf'];
+
+	checkOnBlackList(tweet.text);
+	['name', 'screen_name', 'description'].forEach(function (property) {
+		checkOnBlackList(tweet.user[property]);
+	});
+
+	function checkOnBlackList (data) {
+		BlackList.forEach(function (word){
+			if (data.indexOf(word) !== -1){
+				return permited = false;
+			}
+		});
+
+	}
+
+	return permited;
 }
 
 
