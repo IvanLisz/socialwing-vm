@@ -13,12 +13,14 @@ function stream (user, limit, callback) {
 
 	var StartStream = Date.now();
 
+	console.log("INSIDE STREAM");
+
 	var stream = userTw.stream('statuses/filter',  { track: user.settings.track.join(), language: user.settings.trackLangs.join() });
 	var usersToFollow = [];
 	stream.on('tweet', function (tweet) {
-		var streamTimeOut = (Date.now() - StartStream) < 15000; //pasaron menos de 15 Segundos?
+		var streamTimeOut = (Date.now() - StartStream) < 2000; //pasaron menos de 15 Segundos?
 		if (usersToFollow.length < limit &&  streamTimeOut) {
-			if (usersToFollow.map(function (uData){ return uData.id }).indexOf(tweet.user.id) >=  0 || !_checkDifference(user, tweet.user) || !_filterUser(tweet)) {
+			if (usersToFollow.map(function (uData){ return uData.id }).indexOf(tweet.user.id) >=  0 || !_checkDifference(user, tweet.user, 'followOnDifference') || !_filterUser(tweet)) {
 				return;
 			}
 			//console.log(tweet.text);
@@ -62,7 +64,6 @@ function _filterUser (tweet) {
 }
 
 
-
 function checkFollowers (user, usersToCheck, callback) {
 
 	if (usersToCheck.constructor !== Array) {
@@ -86,7 +87,7 @@ function checkFollowers (user, usersToCheck, callback) {
 		console.log('usersChecked');
 		console.log(usersChecked);
 		usersChecked.forEach(function (userChecked) {
-			if (userChecked.connections.indexOf('followed_by') === -1) {
+			if (userChecked.connections.indexOf('followed_by') === -1 || _checkDifference(user, userChecked, 'unfollowOnDifference')) {
 				console.log('unfollow!');
 				notFollowers.push(userChecked.id);
 			} else {
@@ -117,8 +118,8 @@ function generateUserStats (user) {
 	});
 }
 
-function _checkDifference (user , tweetUser) {
-	return Math.floor(tweetUser.friends_count*100/tweetUser.followers_count) >= user.settings.followOnDifference;
+function _checkDifference (user , tweetUser, difference) {
+	return Math.floor(tweetUser.friends_count*100/tweetUser.followers_count) >= user.settings[difference];
 }
 
 function _parseStreamUser (user) {

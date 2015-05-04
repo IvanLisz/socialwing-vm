@@ -63,8 +63,10 @@ function _getNowMinute () {
 }
 
 function createUnfollowTask (task) {
-	task.timestamp = Date.now() + 7200000;
-	calendar.insert(task);
+	if (task.unfollow && task.unfollow.length){
+		task.timestamp = Date.now() + 7200000;
+		calendar.insert(task);
+	}
 }
 
 function getUser (id, callback) {
