@@ -98,7 +98,7 @@ function createUserCalendar (user, firstCalendar) {
 	_fillWithFollow(calendar, firstCalendar);
 	_generateNewCalendarTask(calendar);
 	_fillWithUser(calendar, user.twitter.id, user.twitter.screen_name);
-	Twitter.generateDailyStats(user);
+	//Twitter.generateDailyStats(user);
 	return calendar;
 
 }
@@ -124,3 +124,9 @@ module.exports = {
 	createUserCalendar: createUserCalendar
 }
 
+
+/*Database.create(function(){
+	var user = { twitter: { id: 1, screen_name: "peron" } };
+	Database.sendCalendar(createUserCalendar(user));
+});
+*/

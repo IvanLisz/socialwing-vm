@@ -123,6 +123,16 @@ function deleteTask (task) {
 	calendar.remove({ "_id": task._id });
 }
 
+
+function checkUserCalendar (userData, callback) {
+	calendar.findOne({ 'user.id': userData.twitter.id }, function(err, data) {
+		if (err || !data){
+			return callback(err, false);
+		}
+		return callback(null, true);
+	});
+}
+
 module.exports = {
 	create: create,
 	close: close,
@@ -133,5 +143,6 @@ module.exports = {
 	sendCalendar: sendCalendar,
 	saveDailyStats: saveDailyStats,
 	deleteTask: deleteTask,
-	saveMetrics: saveMetrics
+	saveMetrics: saveMetrics,
+	checkUserCalendar: checkUserCalendar
 };
