@@ -19,8 +19,3 @@ function generateUserCalendar (user) {
 module.exports = {
 	generateUserCalendar: generateUserCalendar
 }
-
-
-var user = { twitter: { id:1 }};
-
-generateUserCalendar(user);
