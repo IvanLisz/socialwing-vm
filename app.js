@@ -12,12 +12,12 @@ var CronJob 		= require('cron').CronJob,
 
 
 
-app.post('/init', function (req, res) {
+app.get('/init', function (req, res) {
 	console.log('INIT CALENDAR FROM EC2');
-	var userId = Number(req.params.id);
+	var userId = req.query.id;
 	//res.send(userId);
 
-	Database.getUser (userId, function(err, userData){
+	Database.getUserById(userId, function(err, userData){
 		if(err){
 			console.log(err);
 			return;

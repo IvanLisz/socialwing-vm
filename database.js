@@ -1,4 +1,6 @@
-var MongoClient = require('mongodb').MongoClient;
+var Mongo = require('mongodb');
+var MongoClient = Mongo.MongoClient;
+var ObjectId = Mongo.ObjectID;
 
 var calendar;
 var users;
@@ -66,6 +68,17 @@ function createUnfollowTask (task) {
 function getUser (id, callback) {
 
 	users.findOne({ 'id': id }, function(err, userdata) {
+		if (err || !userdata) {
+			return callback(err || 'UserID ('+ id + ') was not founded.');
+		}
+
+		return callback(null, userdata);
+	});
+}
+
+function getUserById (id, callback) {
+
+	users.findOne({ '_id': new ObjectId(id) }, function(err, userdata) {
 		if (err || !userdata) {
 			return callback(err || 'UserID ('+ id + ') was not founded.');
 		}
@@ -157,6 +170,7 @@ module.exports = {
 	getTasks: getTasks,
 	createUnfollowTask: createUnfollowTask,
 	getUser: getUser,
+	getUserById: getUserById,
 	getUsers: getUsers,
 	sendCalendar: sendCalendar,
 	saveDailyStats: saveDailyStats,
