@@ -7,14 +7,27 @@ var CronJob 		= require('cron').CronJob,
 	TwitterActions	= require('./twitteractions'), //originally require('./lambda/lambda'),
 	Calendar		= require('./calendar'),
 	express 		= require('express'),
-	app 			= express();
+	app 			= express(),
+	Web				= require('./web');
 
 
 
 app.post('/init', function (req, res) {
 	console.log('INIT CALENDAR FROM EC2');
-	var userId = req.params.user;
-	console.log(userId);
+	var userId = Number(req.params.id);
+	//res.send(userId);
+
+	Database.getUser (userId, function(err, userData){
+		if(err){
+			console.log(err);
+			return;
+		}
+		console.log(userData);
+		Web.generateUserCalendar(userData);
+	});
+
+
+	res.sendStatus(200);
 });
 
 var server = app.listen(9100, function () {
