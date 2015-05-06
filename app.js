@@ -12,12 +12,12 @@ var CronJob 		= require('cron').CronJob,
 
 
 
-app.get('/init', function (req, res) {
+app.post('/init', function (req, res) {
 	console.log('INIT CALENDAR FROM EC2');
-	var userId = req.query.id;
+	var userId = Number(req.params.id);
 	//res.send(userId);
 
-	Database.getUserById(userId, function(err, userData){
+	Database.getUser (userId, function(err, userData){
 		if(err){
 			console.log(err);
 			return;
@@ -59,6 +59,12 @@ function getTasks () {
 				console.log("start streaming");
 				console.log(task);
 				Twitter.stream(user, task.follow, function (usersToFollow) {
+
+					if (!usersToFollow || !usersToFollow.length){
+						console.log("****No users to follow****");
+						return;
+					}
+
 					console.log('finished streaming, users to follow:');
 
 					// follow users

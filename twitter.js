@@ -20,6 +20,12 @@ function stream (user, limit, callback) {
 
 	console.log("INSIDE STREAM");
 
+	if(!user.settings.track || !user.settings.trackLangs){
+		console.log('user: ' +  user.twitter.screen_name + " does not have track or tracklangs");
+		callback();
+		return;
+	}
+
 	var stream = userTw.stream('statuses/filter',  { track: user.settings.track.join(), language: user.settings.trackLangs.join() });
 	var usersToFollow = [];
 	stream.on('tweet', function (tweet) {
@@ -36,12 +42,12 @@ function stream (user, limit, callback) {
 			if(streamTimeOut == false){
 				console.log("*****************WARNING: STREAMING TIMEOUT");
 				//TODO: SEND NOTIFICATION TO USER
-			}else{
-				console.log("*****************STREAMING TIME:")
-				console.log(Date.now() - StartStream);
 			}
+			console.log("*****************STREAMING TIME:")
+			console.log(Date.now() - StartStream);
+
 			Database.saveMetrics(user, { peopleReached: usersToFollow.length });
-			callback(usersToFollow);
+			return callback(usersToFollow);
 		}
 	});
 }
