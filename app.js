@@ -137,9 +137,9 @@ function sendMessages (user, followers, followData) {
 
 function getMessage (followerData, messages) {
 	var msg = messages[Util.randomInt(0, messages.length -1)]
-			.replace("%screen_name", followerData.screen_name)
-			.replace("%full_name", followerData.name)
-			.replace("%first_name", followerData.name.split(' ')[0] || followerData.name)
-			.replace("%last_name", followerData.name.split(' ')[1] || followerData.name);
+			.replace("%usuario", followerData.screen_name)
+			.replace("%nombre_completo", followerData.name)
+			.replace("%nombre", followerData.name.split(' ')[0] || followerData.name.toLowerCase())
+			.replace("%apellido", followerData.name.split(' ')[1] || followerData.name.toLowerCase());
 	return msg;
 }
