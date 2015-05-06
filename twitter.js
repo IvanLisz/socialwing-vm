@@ -143,7 +143,15 @@ function generateDailyStats (user, callback) {
 }
 
 function _checkDifference (user , tweetUser, difference) {
-	return Math.floor(tweetUser.friends_count*100/tweetUser.followers_count) >= user.settings[difference];
+	if (!user.settings[difference]){
+		if (difference == "unfollowOnDifference"){
+			return false;
+		} else if (difference == "followOnDifference") {
+			return true;
+		}
+	}else {
+		return Math.floor(tweetUser.friends_count*100/tweetUser.followers_count) >= user.settings[difference];
+	}
 }
 
 function _parseStreamUser (user) {
