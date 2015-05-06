@@ -15,8 +15,8 @@ function init () {
 		region: 'us-west-2',
 		uploadTimeout: 120000
 	});
-	cloudedTask = λ('./lambda-task', 'run', ['twit'], { name: 'monk-task', ignoreResponse: true, timeout: 10 });
-	cloudedMessages = λ('./lambda-messages', 'run', ['twit'], { name: 'monk-messages', ignoreResponse: true, timeout: 10 });
+	cloudedTask = λ('./lambda-task', 'run', ['twit'], { name: 'monk-task', ignoreResponse: true, timeout: 30 });
+	cloudedMessages = λ('./lambda-messages', 'run', ['twit'], { name: 'monk-msgs', ignoreResponse: true, timeout: 30 });
 }
 
 function runTask (user, task) {

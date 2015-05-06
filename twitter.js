@@ -85,18 +85,29 @@ function checkFollowers (user, unfollow, callback) {
 		}
 		var notFollowers = [];
 		var followers = [];
-		console.log('usersChecked');
-		console.log(usersChecked);
+		var countNewFollowers = 0;
+
+		//console.log('usersChecked');
+		//console.log(usersChecked);
+
 		usersChecked.forEach(function (userChecked, index) {
-			if (userChecked.connections.indexOf('followed_by') === -1 || _checkDifference(user, unfollow[index], 'unfollowOnDifference')) {
+			if (userChecked.connections.indexOf('followed_by') > -1) { //if user is following back
+				if (_checkDifference(user, unfollow[index], 'unfollowOnDifference')) {
+					console.log("unfollow! -- unfollowOnDifference")
+					notFollowers.push(userChecked.id);
+				} else {
+					console.log('continue following!');
+					followers.push(userChecked.id);
+				}
+				newFollowers =+ 1;
+			} else {
 				console.log('unfollow!');
 				notFollowers.push(userChecked.id);
-			} else {
-				console.log('not unfollow!');
-				followers.push(userChecked.id);
 			}
-				console.log(userChecked);
+			console.log(userChecked);
 		});
+
+		Database.saveMetrics(user, { newFollowers: countNewFollowers });
 		callback(null, notFollowers, followers);
 	});
 }

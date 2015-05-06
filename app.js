@@ -22,7 +22,6 @@ function getTasks () {
 				return;
 			}
 
-
 			if (task.follow) {
 				console.log('follow ' + task.follow + ' with ' + task.user.screen_name + ' (' + task.user.id + ')');
 
@@ -63,11 +62,10 @@ function getTasks () {
 					console.log('followers to send message');
 					console.log(followers);
 					sendMessages(user, followers, task.unfollow);
-					var metrics = { newFollowers: followers.length };
-					Database.saveMetrics(user, metrics);
+					//var metrics = { newFollowers: followers.length };
+					//Database.saveMetrics(user, metrics);
 				});
 			}
-
 
 			if (task.action && task.action.length) {
 				console.log("Creando calendario para: " + user.twitter.screen_name + ' (' + user.twitter.id + ')');
