@@ -1,4 +1,4 @@
 module.exports = {
-	APP_TOKEN: 'J7bYSGfe2zuhOFISiDHHxOgkK',
-	APP_SECRET: 'rYdLmn9mcd5rFdrFXJNsP4dan2q7YjD0nUzBR0dTJUeNKAaQbN'
+	APP_TOKEN: '7t5i7gjUnVpSAtaiTtapd4my3',
+	APP_SECRET: '93VG4qckXNp74V7JXLVnkhhNm9XpddmrASiUt1d3OsaTXvVLhu'
 };
