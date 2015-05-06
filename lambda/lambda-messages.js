@@ -1,10 +1,9 @@
-//var Twit 		= require('twit'),
-//	userTw;
+var Twit 		= require('twit'),
+	userTw;
 
 function run (messages, credentials, callback) {
-	console.log("hola");
-	//userTw = new Twit(credentials);
-	//sendMessages(messages, 0, callback);
+	userTw = new Twit(credentials);
+	sendMessages(messages, 0, callback);
 }
 
 function sendMessages (messages, index, callback) {

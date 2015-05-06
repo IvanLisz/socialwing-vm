@@ -1,6 +1,6 @@
 var lambdaws 	= require('lambdaws'),
 	λ 			= lambdaws.create,
-	credentials = require('./credentials');
+	credentials = require('../credentials');
 
 var cloudedTask;
 var cloudedMessages;

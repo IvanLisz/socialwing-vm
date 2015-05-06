@@ -1,4 +1,4 @@
-var MongoClient 	= require('mongodb').MongoClient;
+var MongoClient = require('mongodb').MongoClient;
 
 var calendar;
 var users;
@@ -71,7 +71,7 @@ function createUnfollowTask (task) {
 
 function getUser (id, callback) {
 
-	users.findOne({ 'twitter.id': id }, function(err, userdata) {
+	users.findOne({ 'id': id }, function(err, userdata) {
 		if (err || !userdata) {
 			return callback(err || 'UserID ('+ id + ') was not founded.');
 		}
@@ -89,22 +89,36 @@ function getUsers (callback) {
 	});
 }
 
-function sendCalendar (userCalendar) {
+function sendCalendar (userCalendar, callback) {
 	// Insert new calendar
-	calendar.insert(userCalendar);
+	console.log(userCalendar);
+	calendar.insert(userCalendar.calendar, function (err, response){
+		if (err){
+			return callback(err);
+		}
+		return callback(null, userCalendar.user)
+	});
 }
 
 
-function saveDailyStats (user, userData) {
+function saveDailyStats (user, twitterUserData) {
+
+	console.log('before');
+	console.log(user.metrics.stats);
 	if (!user.metrics.stats) {
 		user.metrics.stats = [];
 	}
 	user.metrics.stats.push({
-		followers: userData.followers_count,
-		following: userData.friends_count,
+		followers: twitterUserData.followers_count,
+		following: twitterUserData.friends_count,
 		timestamp: Date.now()
 	});
-	users.update({ _id: user._id }, user);
+
+	console.log('after');
+	console.log(user.metrics.stats);
+	console.log('user._id');
+	console.log(user._id);
+	updateUser(user);
 }
 
 function saveMetrics(user, newMetrics){
@@ -116,7 +130,14 @@ function saveMetrics(user, newMetrics){
 		user.metrics[property] = user.metrics[property] + newMetrics[property];
 	});
 
-	users.update({ _id: user._id }, user);
+
+	//users.update({ _id: user._id }, user);
+	updateUser(user);
+}
+
+function updateUser(user, callback) {
+	delete user._id;
+	users.update({ id: user.id }, user, callback);
 }
 
 function deleteTask (task) {
@@ -125,7 +146,7 @@ function deleteTask (task) {
 
 
 function checkUserCalendar (userData, callback) {
-	calendar.findOne({ 'user.id': userData.twitter.id }, function(err, data) {
+	calendar.findOne({ 'user.id': userData.id }, function(err, data) {
 		if (err || !data){
 			return callback(err, false);
 		}

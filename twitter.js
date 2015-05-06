@@ -3,6 +3,10 @@ var Twit 		= require('twit'),
 	Util 			= require('./util'),
 	Database		= require('./database');
 
+//	console.log('JSON.stringify(Database)');
+//	console.log(JSON.stringify(Database));
+//	console.log(Database);
+
 function stream (user, limit, callback) {
 
 	var userTw = new Twit({
@@ -112,7 +116,10 @@ function checkFollowers (user, unfollow, callback) {
 	});
 }
 
-function generateDailyStats (user) {
+function generateDailyStats (user, callback) {
+
+	console.log("GENERATE DAILY STATS");
+
 	var userTw = new Twit({
 		consumer_key: credentials.APP_TOKEN,
 		consumer_secret: credentials.APP_SECRET,
@@ -120,14 +127,20 @@ function generateDailyStats (user) {
 		access_token_secret: user.tokenSecret
 	});
 
-	userTw.get('users/show', { id: user.twitter.id }, function (err, userData){
+	console.log('user.id');
+	console.log(user.id);
+
+	userTw.get('users/show', { id: user.id }, function (err, twitterUserData){
 		if (err) {
-			console.log('Error while looking up status of' + user.twitter.screen_name + ' (' + user.twitter.id + ')');
+			console.log('Error while looking up status of' + user.twitter.screen_name + ' (' + user.id + ')');
 			return;
 		}
-
-		Database.saveDailyStats(user, userData);
+		//return callback(null,twitterUserData);
+		//console.log(JSON.stringify(Database));
+		Database.saveDailyStats(user, twitterUserData);
 	});
+
+
 }
 
 function _checkDifference (user , tweetUser, difference) {

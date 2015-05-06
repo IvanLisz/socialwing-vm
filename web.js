@@ -1,5 +1,6 @@
-Calendar		= require('./calendar'),
-Database		= require('./database');
+var Calendar		= require('./calendar'),
+	Twitter 		= require('./twitter'),
+	Database		= require('./database');
 
 function generateUserCalendar (user) {
 
@@ -10,7 +11,13 @@ function generateUserCalendar (user) {
 			}
 			console.log("already exists: " + exists);
 			if (!exists){
-				Database.sendCalendar(Calendar.createUserCalendar(user, true));
+				Database.sendCalendar(Calendar.createUserCalendar(user, true), function (err){
+					if (err){
+						console.log("error on Database.sendCalendar: " + err)
+						return;
+					}
+					Twitter.generateDailyStats(user);
+				});
 			}
 		});
 	});
@@ -19,3 +26,14 @@ function generateUserCalendar (user) {
 module.exports = {
 	generateUserCalendar: generateUserCalendar
 }
+/*
+Database.create(function (){
+	Database.getUser (566906713, function(err, userData){
+		if(err){
+			console.log(err);
+			return;
+		}
+
+		generateUserCalendar(userData);
+	});
+});*/

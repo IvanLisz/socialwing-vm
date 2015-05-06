@@ -4,7 +4,7 @@ var CronJob 		= require('cron').CronJob,
 	Util 			= require('./util'),
 	Twitter 		= require('./twitter'),
 	Database		= require('./database'),
-	Lambda			= require('./lambda'),
+	TwitterActions	= require('./twitteractions'), //originally require('./lambda/lambda'),
 	Calendar		= require('./calendar'),
 	lastCalendar	= null;
 
@@ -33,7 +33,7 @@ function getTasks () {
 					// follow users
 					var followTask = Util.clone(task);
 					followTask.follow = Util.getIds(usersToFollow);
-					Lambda.runTask(user, followTask);
+					TwitterActions.runTask(user, followTask);
 					console.log(followTask);
 
 					// create unfollow task, get rid of the follow and make it unfollow
@@ -56,20 +56,25 @@ function getTasks () {
 					// follow users
 					var unfollowTask = Util.clone(task);
 					unfollowTask.unfollow = notFollowers;
-					Lambda.runTask(user, unfollowTask);
+					TwitterActions.runTask(user, unfollowTask);
 
 
 					console.log('followers to send message');
 					console.log(followers);
 					sendMessages(user, followers, task.unfollow);
-					//var metrics = { newFollowers: followers.length };
-					//Database.saveMetrics(user, metrics);
 				});
 			}
 
 			if (task.action && task.action.length) {
-				console.log("Creando calendario para: " + user.twitter.screen_name + ' (' + user.twitter.id + ')');
-				Database.sendCalendar(Calendar.createUserCalendar(user));
+				console.log("Creando calendario para: " + user.twitter.screen_name + ' (' + user.id + ')');
+				Database.sendCalendar(Calendar.createUserCalendar(user), function (err){
+					if (err){
+						console.log("error on Database.sendCalendar: " + err)
+						return;
+					}
+					Twitter.generateDailyStats(user);
+				});
+				//Database.sendCalendar(Calendar.createUserCalendar(user));
 			}
 
 		});
@@ -111,7 +116,7 @@ function sendMessages (user, followers, followData) {
 	console.log('*******************run messages');
 	console.log(messages);
 	// message followers
-	Lambda.runMessages(user, messages);
+	TwitterActions.runMessages(user, messages);
 }
 
 function getMessage (followerData, messages) {

@@ -1,5 +1,4 @@
-var Twitter 		= require('./twitter'),
-	Database		= require('./database'),
+var Database		= require('./database'),
 	Util 			= require('./util');
 
 function getMinutes (firstCalendar) {
@@ -78,15 +77,10 @@ function _generateNewCalendarTask(calendar) {
 }
 
 function _createCalendar (users, callback) {
-
-
 	var usersCalendar = [];
 	users.forEach(function (user) {
-
 		usersCalendar = usersCalendar.concat(createUserCalendar(user));
-
 	});
-
 	return callback(usersCalendar);
 }
 
@@ -97,14 +91,12 @@ function createUserCalendar (user, firstCalendar) {
 	var calendar = getMinutes(firstCalendar);
 	_fillWithFollow(calendar, firstCalendar);
 	_generateNewCalendarTask(calendar);
-	_fillWithUser(calendar, user.twitter.id, user.twitter.screen_name);
-	//Twitter.generateDailyStats(user);
-	return calendar;
-
+	_fillWithUser(calendar, user.id, user.twitter.screen_name);
+	return {calendar: calendar, user: user};
 }
 
 
-function create () {
+/*function create () {
 	Database.create(function(){
 		Database.getUsers(function(err, users){
 			if (err){
@@ -117,16 +109,9 @@ function create () {
 			});
 		});
 	});
-}
+}*/
 
 module.exports = {
-	create: create,
+	//create: create,
 	createUserCalendar: createUserCalendar
 }
-
-
-/*Database.create(function(){
-	var user = { twitter: { id: 1, screen_name: "peron" } };
-	Database.sendCalendar(createUserCalendar(user));
-});
-*/
