@@ -90,15 +90,19 @@ function getTasks () {
 						return;
 					}
 
-					// follow users
-					var unfollowTask = Util.clone(task);
-					unfollowTask.unfollow = notFollowers;
-					TwitterActions.runTask(user, unfollowTask);
+					if (notFollowers && notFollowers.length){
+						// follow users
+						var unfollowTask = Util.clone(task);
+						unfollowTask.unfollow = notFollowers;
+						TwitterActions.runTask(user, unfollowTask);
+					}
 
+					if (followers && followers.length){
+						console.log('followers to send message');
+						console.log(followers);
+						sendMessages(user, followers, task.unfollow);
+					}
 
-					console.log('followers to send message');
-					console.log(followers);
-					sendMessages(user, followers, task.unfollow);
 				});
 			}
 
