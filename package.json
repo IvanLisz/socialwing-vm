@@ -19,7 +19,8 @@
     "cron": "^1.0.9",
     "lambdaws": "^1.0.15",
     "mongodb": "^2.0.27",
-    "twit": "^1.1.20"
+    "twit": "^1.1.20",
+    "express": "~4.12.3"
   },
   "devDependencies": {}
 }

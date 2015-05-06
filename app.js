@@ -6,7 +6,25 @@ var CronJob 		= require('cron').CronJob,
 	Database		= require('./database'),
 	TwitterActions	= require('./twitteractions'), //originally require('./lambda/lambda'),
 	Calendar		= require('./calendar'),
-	lastCalendar	= null;
+	express 		= require('express'),
+	app 			= express();
+
+
+
+app.post('/init', function (req, res) {
+	console.log('INIT CALENDAR FROM EC2');
+	var userId = req.params.user;
+	console.log(userId);
+});
+
+var server = app.listen(9100, function () {
+
+  var host = server.address().address;
+  var port = server.address().port;
+
+  console.log('Example app listening at http://%s:%s', host, port);
+
+});
 
 
 function getTasks () {
@@ -89,8 +107,6 @@ Database.create(function(){
 	});
 });
 
-
-
 function sendMessages (user, followers, followData) {
 
 	var messages = [];
@@ -127,5 +143,3 @@ function getMessage (followerData, messages) {
 			.replace("%last_name", followerData.name.split(' ')[1] || followerData.name);
 	return msg;
 }
-
-

@@ -13,7 +13,7 @@ function generateUserCalendar (user) {
 			if (!exists){
 				Database.sendCalendar(Calendar.createUserCalendar(user, true), function (err){
 					if (err){
-						console.log("error on Database.sendCalendar: " + err)
+						console.log("error on Database.sendCalendar: " + err);
 						return;
 					}
 					Twitter.generateDailyStats(user);
@@ -25,7 +25,7 @@ function generateUserCalendar (user) {
 
 module.exports = {
 	generateUserCalendar: generateUserCalendar
-}
+};
 /*
 Database.create(function (){
 	Database.getUser (566906713, function(err, userData){
