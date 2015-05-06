@@ -20,7 +20,7 @@ function stream (user, limit, callback) {
 
 	console.log("INSIDE STREAM");
 
-	if(!user.settings.track || !user.settings.trackLangs){
+	if(!user.settings.track || !user.settings.trackLangs || !user.settings.trackLangs.length || !user.settings.track.length){
 		console.log('user: ' +  user.twitter.screen_name + " does not have track or tracklangs");
 		callback();
 		return;
