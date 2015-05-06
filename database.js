@@ -122,6 +122,9 @@ function saveDailyStats (user, twitterUserData) {
 }
 
 function saveMetrics(user, newMetrics){
+
+	console.log(newMetrics);
+
 	if(!newMetrics || !user) {
 		return;
 	}

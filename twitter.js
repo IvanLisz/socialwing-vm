@@ -23,7 +23,7 @@ function stream (user, limit, callback) {
 	var stream = userTw.stream('statuses/filter',  { track: user.settings.track.join(), language: user.settings.trackLangs.join() });
 	var usersToFollow = [];
 	stream.on('tweet', function (tweet) {
-		var streamTimeOut = (Date.now() - StartStream) < 20000; //pasaron menos de 20 Segundos?
+		var streamTimeOut = (Date.now() - StartStream) < 30000; //pasaron menos de 30 Segundos?
 		if (usersToFollow.length < limit &&  streamTimeOut) {
 			if (usersToFollow.map(function (uData){ return uData.id }).indexOf(tweet.user.id) >=  0 || !_checkDifference(user, tweet.user, 'followOnDifference') || !_filterUser(tweet)) {
 				return;
@@ -40,8 +40,7 @@ function stream (user, limit, callback) {
 				console.log("*****************STREAMING TIME:")
 				console.log(Date.now() - StartStream);
 			}
-			var metrics = { peopleReached: usersToFollow.length };
-			Database.saveMetrics(user, metrics);
+			Database.saveMetrics(user, { peopleReached: usersToFollow.length });
 			callback(usersToFollow);
 		}
 	});
@@ -89,7 +88,7 @@ function checkFollowers (user, unfollow, callback) {
 		}
 		var notFollowers = [];
 		var followers = [];
-		var countNewFollowers = 0;
+		var newFollowers = 0;
 
 		//console.log('usersChecked');
 		//console.log(usersChecked);
@@ -103,7 +102,7 @@ function checkFollowers (user, unfollow, callback) {
 					console.log('continue following!');
 					followers.push(userChecked.id);
 				}
-				newFollowers =+ 1;
+				newFollowers++;
 			} else {
 				console.log('unfollow!');
 				notFollowers.push(userChecked.id);
@@ -111,7 +110,7 @@ function checkFollowers (user, unfollow, callback) {
 			console.log(userChecked);
 		});
 
-		Database.saveMetrics(user, { newFollowers: countNewFollowers });
+		Database.saveMetrics(user, { newFollowers: newFollowers });
 		callback(null, notFollowers, followers);
 	});
 }
