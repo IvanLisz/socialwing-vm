@@ -39,8 +39,8 @@ function _getTasksByMinutes (minutes, callback) {
 
 	calendar.find({
 		timestamp: {
-			"$lt" : minutes + 60001,
-			"$gt" : minutes - 1
+			"$lt" : minutes + 60001
+			//"$gt" : minutes - 1
 		}
 	}).each(function (err, data) {
 		if (err || !data) {
