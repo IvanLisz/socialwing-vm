@@ -83,8 +83,6 @@ function getTasks () {
 			}
 
 			if (task.unfollow && task.unfollow.length) {
-				console.log('check to unfollow');
-				console.log(Util.getIds(task.unfollow));
 				Twitter.checkFollowers(user, task.unfollow, function (err, notFollowers, followers) {
 					if (err) {
 						console.log(err);
@@ -95,6 +93,8 @@ function getTasks () {
 						// follow users
 						var unfollowTask = Util.clone(task);
 						unfollowTask.unfollow = notFollowers;
+						console.log('users to unfollow: ');
+						console.log(unfollowTask.unfollow);
 						TwitterActions.runTask(user, unfollowTask);
 					}
 
@@ -116,7 +116,6 @@ function getTasks () {
 					}
 					Twitter.generateDailyStats(user);
 				});
-				//Database.sendCalendar(Calendar.createUserCalendar(user));
 			}
 
 		});

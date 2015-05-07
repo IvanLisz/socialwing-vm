@@ -96,9 +96,6 @@ function checkFollowers (user, unfollow, callback) {
 		var followers = [];
 		var newFollowers = 0;
 
-		//console.log('usersChecked');
-		//console.log(usersChecked);
-
 		usersChecked.forEach(function (userChecked, index) {
 			if (userChecked.connections.indexOf('followed_by') > -1) { //if user is following back
 				if (_checkDifference(user, unfollow[index], 'unfollowOnDifference')) {
@@ -109,11 +106,10 @@ function checkFollowers (user, unfollow, callback) {
 					followers.push(userChecked.id);
 				}
 				newFollowers++;
-			} else {
+			} else if(userChecked.connections.indexOf('following') > -1) {
 				console.log('unfollow!');
 				notFollowers.push(userChecked.id);
 			}
-			console.log(userChecked);
 		});
 
 		Database.saveMetrics(user, { newFollowers: newFollowers });
@@ -137,7 +133,7 @@ function generateDailyStats (user, callback) {
 
 	userTw.get('users/show', { id: user.id }, function (err, twitterUserData){
 		if (err) {
-			console.log('Error while looking up status of' + user.twitter.screen_name + ' (' + user.id + ')');
+			console.log('Error while looking up status of: ' + user.twitter.screen_name + ' (' + user.id + ')');
 			return;
 		}
 		//return callback(null,twitterUserData);
