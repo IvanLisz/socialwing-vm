@@ -50,6 +50,10 @@ function stream (user, limit, callback) {
 			return callback(usersToFollow);
 		}
 	});
+	stream.on('error', function (error) {
+		console.log("ERROR EN TWITTER STREAM!!!");
+		console.log(error.message);
+	});
 }
 
 
