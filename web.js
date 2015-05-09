@@ -26,14 +26,3 @@ function generateUserCalendar (user) {
 module.exports = {
 	generateUserCalendar: generateUserCalendar
 };
-/*
-Database.create(function (){
-	Database.getUser (566906713, function(err, userData){
-		if(err){
-			console.log(err);
-			return;
-		}
-
-		generateUserCalendar(userData);
-	});
-});*/

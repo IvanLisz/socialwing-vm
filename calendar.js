@@ -31,12 +31,15 @@ function getMinutes (firstCalendar) {
 }
 
 function _fillWithFollow (calendar, firstCalendar) {
-	var FollowLimit = Util.randomInt(900,1000);
+	var FollowLimit = Util.randomInt(950,1000);
 	var FollowHour = Math.floor(FollowLimit/calendar.length);
+
+	console.log('FollowLimit');
+	console.log(FollowLimit)
 
 	var FollowToday = 0;
 
-	calendar.forEach(function (action) {
+	calendar.forEach(function (action, index) {
 		var IncrementF = Util.randomInt(0,7);
 		var PassedLimit = (FollowToday + FollowHour + IncrementF) >= FollowLimit;
 
@@ -46,6 +49,7 @@ function _fillWithFollow (calendar, firstCalendar) {
 			if(Util.randomInt(0,1) == 0 || PassedLimit){
 				if(PassedLimit){
 					var FHour = 0;
+					calendar.splice(index);
 				} else {
 					var FHour = FollowHour - IncrementF;
 				}
@@ -56,7 +60,11 @@ function _fillWithFollow (calendar, firstCalendar) {
 		}
 		action.follow = FHour;
 		FollowToday = FollowToday + FHour;
+
 	});
+
+		console.log('FollowToday');
+		console.log(FollowToday);
 }
 
 function _fillWithUser (calendar, uid, user) {
@@ -96,22 +104,6 @@ function createUserCalendar (user, firstCalendar) {
 }
 
 
-/*function create () {
-	Database.create(function(){
-		Database.getUsers(function(err, users){
-			if (err){
-				console.log("err");
-				console.log(err);
-				return;
-			}
-			_createCalendar(users, function(calendar){
-				Database.sendCalendar(calendar);
-			});
-		});
-	});
-}*/
-
 module.exports = {
-	//create: create,
 	createUserCalendar: createUserCalendar
 }

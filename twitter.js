@@ -59,7 +59,7 @@ function stream (user, limit, callback) {
 
 function _filterUser (tweet) {
 	var permited = true;
-	var BlackList = ['+18', 'porn', 'sex', 'gay', 'lesbian', 'xxx', 'calient', 'puta', 'puto', 'cunt', 'fuck', 'milf', 'Pics', 'hot', 'chicks'];
+	var BlackList = ['+18', 'porn', 'sex', 'gay', 'lesbian', 'xxx', 'calient', 'puta', 'puto', 'cunt', 'fuck', 'milf', 'Pics', 'hot', 'chicks', 'pibas', 'pibes'];
 
 	checkOnBlackList(tweet.text);
 	['name', 'screen_name', 'description'].forEach(function (property) {
