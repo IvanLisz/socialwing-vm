@@ -46,7 +46,6 @@ function stream (user, limit, callback) {
 			console.log("*****************STREAMING TIME:")
 			console.log(Date.now() - StartStream);
 
-			Database.saveMetrics(user, { peopleReached: usersToFollow.length });
 			return callback(usersToFollow);
 		}
 	});
@@ -59,7 +58,7 @@ function stream (user, limit, callback) {
 
 function _filterUser (tweet) {
 	var permited = true;
-	var BlackList = ['+18', 'porn', 'sex', 'gay', 'lesbian', 'xxx', 'calient', 'puta', 'puto', 'cunt', 'fuck', 'milf', 'Pics', 'hot', 'chicks', 'pibas', 'pibes'];
+	var BlackList = ['+18', 'porn', 'sex', 'gay', 'lesbian', 'xxx', 'calient', 'puta', 'puto', 'cunt', 'fuck', 'milf', 'Pics', 'hot', 'chicks', 'pibas'];
 
 	checkOnBlackList(tweet.text);
 	['name', 'screen_name', 'description'].forEach(function (property) {
@@ -116,7 +115,7 @@ function checkFollowers (user, unfollow, callback) {
 			}
 		});
 
-		Database.saveMetrics(user, { newFollowers: newFollowers });
+		Database.saveMetrics(user, { newFollowers: newFollowers, peopleReached: usersChecked.length });
 		callback(null, notFollowers, followers);
 	});
 }
