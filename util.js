@@ -14,31 +14,6 @@ function getIds (users) {
 	});
 }
 
-function value (itemToRemove) {
-		// Count of removed items
-		var removeCounter = 0;
-
-		// Iterate every array item
-		for (var index = 0; index < this.length; index++) {
-			// If current array item equals itemToRemove then
-			if (this[index] === itemToRemove) {
-				// Remove array item at current index
-				this.splice(index, 1);
-
-				// Increment count of removed items
-				removeCounter++;
-
-				// Decrement index to iterate current position
-				// one more time, because we just removed item
-				// that occupies it, and next item took it place
-				index--;
-			}
-		}
-
-		// Return count of removed items
-		return removeCounter;
-	}
-
 function removeDiacritics (str) {
 
   var defaultDiacriticsRemovalMap = [
