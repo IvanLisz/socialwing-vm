@@ -1,5 +1,6 @@
 var credentials = require('./credentials'),
-	Twit 		= require('twit');
+	Twit 		= require('twit'),
+	Logs		= require('./logs');
 
 function runTask (user, task) {
 	if (!user || !task) {
@@ -53,7 +54,8 @@ function _sendMessages (messages, index, callback) {
 	userTw.post('direct_messages/new', { user_id: messages[index].id, text: messages[index].message }, function (err, reply) {
 		if (err) {
 			console.log('err');
-			console.log(err);
+			//console.log(err);
+			Logs.twitterErr("sendMessages err: " + err);
 		}
 		_sendMessages(messages, index + 1, callback);
 	});
@@ -70,7 +72,8 @@ function _editFriendship (friendship, users, index, callback) {
 	userTw.post('friendships/' + friendship, { id: users[index] }, function (err, reply) {
 		if (err) {
 			console.log('err');
-			console.log(err);
+			//console.log(err);
+			Logs.twitterErr("editFriendship err: " + err);
 		}
 		//console.log(friendship + ' ' + users[index]);
 		_editFriendship(friendship, users, index + 1, callback);

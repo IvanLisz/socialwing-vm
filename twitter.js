@@ -1,7 +1,8 @@
-var Twit 		= require('twit'),
-	credentials = require('./credentials'),
+var Twit 			= require('twit'),
+	credentials 	= require('./credentials'),
 	Util 			= require('./util'),
-	Database		= require('./database');
+	Database		= require('./database'),
+	Logs			= require('./logs');
 
 //	console.log('JSON.stringify(Database)');
 //	console.log(JSON.stringify(Database));
@@ -18,10 +19,9 @@ function stream (user, limit, callback) {
 
 	var StartStream = Date.now();
 
-	console.log("INSIDE STREAM");
-
 	if(!user.settings.track || !user.settings.trackLangs || !user.settings.trackLangs.length || !user.settings.track.length){
-		console.log('user: ' +  user.twitter.screen_name + " does not have track or tracklangs");
+		//console.log('user: ' +  user.twitter.screen_name + " does not have track or tracklangs");
+		Logs.twitterErr('user: ' +  user.twitter.screen_name + " does not have track or tracklangs");
 		callback();
 		return;
 	}
@@ -50,8 +50,9 @@ function stream (user, limit, callback) {
 		}
 	});
 	stream.on('error', function (error) {
-		console.log("ERROR EN TWITTER STREAM!!!");
-		console.log(error.message);
+		//console.log("ERROR EN TWITTER STREAM!!!");
+		//console.log(error.message);
+		Logs.twitterErr("Stream ERROR with user: " + user.twitter.screen_name + " - msg: "+ error.message);
 	});
 }
 
@@ -93,7 +94,7 @@ function checkFollowers (user, unfollow, callback) {
 	});
 	userTw.get('friendships/lookup', { user_id: usersToCheck.join() }, function (err, usersChecked){
 		if (err) {
-			return callback('Error while looking up friendships of: ' + usersToCheck.join());
+			return callback('Error while looking up friendship of: ' + user.twitter.screen_name + " | err: " + err);
 		}
 		var notFollowers = [];
 		var followers = [];
@@ -136,7 +137,8 @@ function generateDailyStats (user, callback) {
 
 	userTw.get('users/show', { id: user.id }, function (err, twitterUserData){
 		if (err) {
-			console.log('Error while looking up status of: ' + user.twitter.screen_name + ' (' + user.id + ')');
+			//console.log('Error while looking up status of: ' + user.twitter.screen_name + ' (' + user.id + ')');
+			Logs.twitterErr('Error while looking up status of: ' + user.twitter.screen_name + ' (' + user.id + ')');
 			return;
 		}
 		//return callback(null,twitterUserData);

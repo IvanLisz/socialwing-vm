@@ -8,19 +8,17 @@ var CronJob 		= require('cron').CronJob,
 	Calendar		= require('./calendar'),
 	express 		= require('express'),
 	app 			= express(),
-	Web				= require('./web');
+	Web				= require('./web'),
+	Logs			= require('./logs');
 
 
 
 app.get('/init', function (req, res) {
-	console.log('INIT CALENDAR FROM EC2');
 	var userId = req.query.id;
-	//res.send(userId);
-
-	console.log(userId);
 	Database.getUserById (userId, function(err, userData){
 		if(err){
-			console.log(err);
+			//console.log(err);
+			Logs.webErr(err);
 			return;
 		}
 		console.log(userData);
@@ -33,10 +31,10 @@ app.get('/init', function (req, res) {
 
 var server = app.listen(9100, function () {
 
-  var host = server.address().address;
-  var port = server.address().port;
+	var host = server.address().address;
+	var port = server.address().port;
 
-  console.log('Example app listening at http://%s:%s', host, port);
+	console.log('Example app listening at http://%s:%s', host, port);
 
 });
 
@@ -45,34 +43,29 @@ function getTasks () {
 
 	Database.getTasks(function (err, task) {
 		if (err){
-			if (err != 'Tasks already executed') { console.log(err) };
+			if (err != 'Tasks already executed' && err != 'No task founded') {
+				//console.log(err);
+				Logs.databaseErr(err);
+			};
 			return;
 		}
 		Database.getUser(task.user.id, function (err, user){
 			if (err){
-				console.log(err);
+				//console.log(err);
+				Logs.databaseErr(err);
 				return;
 			}
 
 			if (task.follow) {
-				console.log('follow ' + task.follow + ' with ' + task.user.screen_name + ' (' + task.user.id + ')');
-
-				console.log("start streaming");
-				console.log(task);
 				Twitter.stream(user, task.follow, function (usersToFollow) {
-
 					if (!usersToFollow || !usersToFollow.length){
-						console.log("****No users to follow****");
+						//console.log("****No users to follow****");
 						return;
 					}
-
-					console.log('finished streaming, users to follow:');
-
 					// follow users
 					var followTask = Util.clone(task);
 					followTask.follow = Util.getIds(usersToFollow);
 					TwitterActions.runTask(user, followTask);
-					console.log(followTask);
 
 					// create unfollow task, get rid of the follow and make it unfollow
 					delete task.follow;
@@ -85,7 +78,8 @@ function getTasks () {
 			if (task.unfollow && task.unfollow.length) {
 				Twitter.checkFollowers(user, task.unfollow, function (err, notFollowers, followers) {
 					if (err) {
-						console.log(err);
+						//console.log(err);
+						Logs.twitterErr(err);
 						return;
 					}
 
@@ -93,14 +87,10 @@ function getTasks () {
 						// follow users
 						var unfollowTask = Util.clone(task);
 						unfollowTask.unfollow = notFollowers;
-						console.log('users to unfollow: ');
-						console.log(unfollowTask.unfollow);
 						TwitterActions.runTask(user, unfollowTask);
 					}
 
 					if (followers && followers.length){
-						console.log('followers to send message');
-						console.log(followers);
 						sendMessages(user, followers, task.unfollow);
 					}
 
@@ -108,10 +98,10 @@ function getTasks () {
 			}
 
 			if (task.action && task.action.length) {
-				console.log("Creando calendario para: " + user.twitter.screen_name + ' (' + user.id + ')');
 				Database.sendCalendar(Calendar.createUserCalendar(user), function (err){
 					if (err){
-						console.log("error on Database.sendCalendar: " + err)
+						//console.log("error on Database.sendCalendar: " + err)
+						Logs.databaseErr(err);
 						return;
 					}
 					Twitter.generateDailyStats(user);
@@ -152,8 +142,6 @@ function sendMessages (user, followers, followData) {
 		});
 	});
 
-	console.log('*******************run messages');
-	console.log(messages);
 	// message followers
 	TwitterActions.runMessages(user, messages);
 }

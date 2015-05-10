@@ -69,7 +69,7 @@ function getUser (id, callback) {
 
 	users.findOne({ 'id': id }, function(err, userdata) {
 		if (err || !userdata) {
-			return callback(err || 'UserID ('+ id + ') was not founded.');
+			return callback(err || 'User TwitterID ('+ id + ') was not founded.');
 		}
 
 		return callback(null, userdata);
@@ -80,7 +80,7 @@ function getUserById (id, callback) {
 
 	users.findOne({ '_id': new ObjectId(id) }, function(err, userdata) {
 		if (err || !userdata) {
-			return callback(err || 'UserID ('+ id + ') was not founded.');
+			return callback(err || 'User _ID ('+ id + ') was not founded.');
 		}
 
 		return callback(null, userdata);
