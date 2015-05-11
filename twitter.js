@@ -110,7 +110,7 @@ function checkFollowers (user, unfollow, callback) {
 					followers.push(userChecked.id);
 				}
 				newFollowers++;
-			} else if(userChecked.connections.indexOf('following') > -1) {
+			} else { //if(userChecked.connections.indexOf('following') > -1) {
 				console.log('unfollow!');
 				notFollowers.push(userChecked.id);
 			}
