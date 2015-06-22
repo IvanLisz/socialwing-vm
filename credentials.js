@@ -1,5 +1,5 @@
 module.exports = {
-	APP_TOKEN: 'KpwwTmOh0xNoeraalo71as7cC',
-	APP_SECRET: 'a0jox0m0kxfLPc7bYOl9A3OKuPoDmLOcxgFVxHmj9hJuObFPJO'
+	APP_TOKEN: '9kXe1QiCG5zLrPwDAqaNtZdpb',
+	APP_SECRET: 'ClWxCsKPmFYcKMy1JdJq2zsrUq6tQ49zeHVxM8RraxdAWU3RF3'
 };
 
